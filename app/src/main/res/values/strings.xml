@@ -1,0 +1,11 @@
+<resources>
+    <!-- Application name -->
+    <string name="app_name">Real Estate Manager</string>
+
+    <!-- Main menu strings -->
+    <string name="search_button">Find a house</string>
+    <string name="create_button">Create new house</string>
+    <string name="map_button">Map</string>
+    <string name="loan_button">Make a loan simulation</string>
+
+</resources>
