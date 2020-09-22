@@ -8,4 +8,6 @@
     <string name="map_button">Map</string>
     <string name="loan_button">Make a loan simulation</string>
 
+    <!-- Loan simulation activity -->
+    <string name="title_loan_simulation">Loan simulation</string>
 </resources>

@@ -12,6 +12,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/divider" />
+        <Constraint
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toTopOf="@id/bottom_scrolling_view"
+            android:id="@+id/divider"
+            android:layout_marginBottom="0dp" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -56,7 +62,7 @@
     </ConstraintSet>
 
     <Transition
-        android:id="@+id/starting_animation"
+        android:id="@+id/main_starting_animation"
         app:constraintSetStart="@+id/start"
         app:constraintSetEnd="@+id/end"
         app:autoTransition="animateToEnd"
@@ -98,6 +104,251 @@
                 app:motionTarget="@+id/image_house"
                 app:framePosition="0"
                 android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="0"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="0"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="0"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="0"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="0"
+                android:alpha="0.5" />
         </KeyFrameSet>
     </Transition>
+    <ConstraintSet
+        android:id="@+id/loan_click_end"
+        app:deriveConstraintsFrom="@+id/start" />
+    <Transition
+        android:id="@+id/loan_click_transition"
+        app:constraintSetStart="@+id/end"
+        app:constraintSetEnd="@+id/loan_click_end"
+        app:duration="2500">
+        <OnClick app:targetId="@+id/image_loan" />
+        <KeyFrameSet >
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="100"
+                android:alpha="1" />
+        </KeyFrameSet>
+    </Transition>
+    <ConstraintSet
+        android:id="@+id/search_click_end"
+        app:deriveConstraintsFrom="@+id/start" />
+    <Transition
+        android:id="@+id/search_click_transition"
+        app:constraintSetStart="@+id/end"
+        app:constraintSetEnd="@+id/search_click_end"
+        app:duration="2500">
+        <OnClick app:targetId="@+id/image_search" />
+        <KeyFrameSet >
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="100"
+                android:alpha="1" />
+        </KeyFrameSet>
+    </Transition>
+    <ConstraintSet
+        android:id="@+id/map_click_end"
+        app:deriveConstraintsFrom="@+id/start" />
+    <Transition
+        android:id="@+id/map_click_transition"
+        app:constraintSetStart="@+id/end"
+        app:constraintSetEnd="@+id/map_click_end"
+        app:duration="2500">
+        <OnClick app:targetId="@+id/image_map" />
+        <KeyFrameSet >
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="100"
+                android:alpha="1" />
+        </KeyFrameSet>
+    </Transition>
+    <ConstraintSet
+        android:id="@+id/house_click_end"
+        app:deriveConstraintsFrom="@+id/start" />
+    <Transition
+        android:id="@+id/house_click_transition"
+        app:constraintSetStart="@+id/end"
+        app:constraintSetEnd="@+id/house_click_end"
+        app:duration="2500">
+        <OnClick app:targetId="@+id/image_house" />
+        <KeyFrameSet >
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="0"
+                android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="50"
+                android:alpha="0.5" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_search"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_map"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_loan"
+                app:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/image_house"
+                app:framePosition="100"
+                android:alpha="1" />
+        </KeyFrameSet>
+    </Transition>
+
 </MotionScene>

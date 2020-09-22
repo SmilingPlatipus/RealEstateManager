@@ -5,14 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openclassrooms.realestatemanager.MainActivity"
-    android:gravity="center"
-    android:id="@+id/main_screen"
-    app:layoutDescription="@xml/activity_main_scene">
+    tools:context="com.openclassrooms.realestatemanager.SecondActivity"
+    app:layoutDescription="@xml/activity_loan_simulation_scene">
 
 
     <LinearLayout
-        android:id="@+id/header_main_activity"
+        android:id="@+id/header_loan_simulation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/rem_background"
@@ -28,10 +26,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/rem_icon"
+            android:background="@drawable/rem_icon_partial"
             android:fontFamily="@font/im_fell_english_sc"
             android:paddingTop="16dp"
-            android:text="@string/app_name"
+            android:text="@string/title_loan_simulation"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             android:textSize="30sp"
@@ -39,56 +37,23 @@
 
     </LinearLayout>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/image_loan"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:alpha="0"
+        android:background="@drawable/rem_loan"
         android:scaleType="fitXY"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/header_main_activity"
-        android:background="@drawable/rem_loan" />
-
-    <ImageButton
-        android:id="@+id/image_search"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_above="@id/image_house"
-        android:alpha="0"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@id/divider"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/rem_search" />
-
-    <ImageButton
-        android:id="@+id/image_house"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:alpha="0"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@id/divider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/rem_house" />
-
-    <ImageButton
-        android:id="@+id/image_map"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_below="@id/image_house"
-        android:alpha="0"
-        android:scaleType="fitXY"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/divider"
-        android:background="@drawable/rem_map" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="@drawable/rem_icon_bar"
-        app:layout_constraintBottom_toTopOf="@id/bottom_scrolling_view"/>
+        app:layout_constraintBottom_toTopOf="@id/bottom_scrolling_view" />
 
     <HorizontalScrollView
         android:id="@+id/bottom_scrolling_view"
@@ -154,7 +119,6 @@
         </LinearLayout>
 
     </HorizontalScrollView>
-
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
