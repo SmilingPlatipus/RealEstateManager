@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openclassrooms.realestatemanager.MainActivity"
+    tools:context="com.openclassrooms.realestatemanager.activities.MainActivity"
     android:gravity="center"
     android:id="@+id/main_screen"
     app:layoutDescription="@xml/activity_main_scene">
@@ -40,7 +40,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/image_loan"
+        android:id="@+id/loan_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:alpha="0"
@@ -51,10 +51,10 @@
         android:background="@drawable/rem_loan" />
 
     <ImageButton
-        android:id="@+id/image_search"
+        android:id="@+id/search_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_above="@id/image_house"
+        android:layout_above="@id/house_button"
         android:alpha="0"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@id/divider"
@@ -62,7 +62,7 @@
         android:background="@drawable/rem_search" />
 
     <ImageButton
-        android:id="@+id/image_house"
+        android:id="@+id/house_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:alpha="0"
@@ -73,10 +73,10 @@
         android:background="@drawable/rem_house" />
 
     <ImageButton
-        android:id="@+id/image_map"
+        android:id="@+id/map_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_below="@id/image_house"
+        android:layout_below="@id/house_button"
         android:alpha="0"
         android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"

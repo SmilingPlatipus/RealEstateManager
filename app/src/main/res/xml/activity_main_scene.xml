@@ -6,7 +6,7 @@
     <ConstraintSet android:id="@+id/start">
         <Constraint android:id="@+id/widget" />
         <Constraint
-            android:id="@+id/image_house"
+            android:id="@+id/house_button"
             android:layout_height="70dp"
             android:layout_width="70dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +28,7 @@
             android:layout_height="70dp"
             app:layout_constraintBottom_toTopOf="@id/divider"
             android:alpha="0"
-            android:id="@+id/image_map"
+            android:id="@+id/map_button"
             android:layout_marginRight="100dp"
             android:layout_marginEnd="100dp"
             android:layout_marginBottom="150dp" />
@@ -38,14 +38,14 @@
             app:layout_constraintBottom_toTopOf="@id/divider"
             android:alpha="0"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/image_search"
+            android:id="@+id/search_button"
             android:layout_marginLeft="100dp"
             android:layout_marginStart="100dp"
             android:layout_marginBottom="150dp" />
         <Constraint
             android:layout_height="70dp"
             android:layout_width="70dp"
-            android:id="@+id/image_house"
+            android:id="@+id/house_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_editor_absoluteY="281dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +56,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="70dp"
-            android:id="@+id/image_loan"
+            android:id="@+id/loan_button"
             app:layout_constraintBottom_toTopOf="@id/divider"
             android:layout_marginBottom="70dp" />
     </ConstraintSet>
@@ -69,59 +69,59 @@
         app:duration="2500">
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="0"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="100"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="100"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="100"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="100"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="0"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="0"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="0"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="0"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="0"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="0"
                 android:alpha="0.5" />
         </KeyFrameSet>
@@ -134,50 +134,50 @@
         app:constraintSetStart="@+id/end"
         app:constraintSetEnd="@+id/loan_click_end"
         app:duration="2500">
-        <OnClick app:targetId="@+id/image_loan" />
+        <OnClick app:targetId="@+id/loan_button" />
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="100"
                 android:alpha="1" />
         </KeyFrameSet>
@@ -190,50 +190,50 @@
         app:constraintSetStart="@+id/end"
         app:constraintSetEnd="@+id/search_click_end"
         app:duration="2500">
-        <OnClick app:targetId="@+id/image_search" />
+        <OnClick app:targetId="@+id/search_button" />
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="100"
                 android:alpha="1" />
         </KeyFrameSet>
@@ -246,50 +246,50 @@
         app:constraintSetStart="@+id/end"
         app:constraintSetEnd="@+id/map_click_end"
         app:duration="2500">
-        <OnClick app:targetId="@+id/image_map" />
+        <OnClick app:targetId="@+id/map_button" />
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="100"
                 android:alpha="1" />
         </KeyFrameSet>
@@ -302,50 +302,50 @@
         app:constraintSetStart="@+id/end"
         app:constraintSetEnd="@+id/house_click_end"
         app:duration="2500">
-        <OnClick app:targetId="@+id/image_house" />
+        <OnClick app:targetId="@+id/house_button" />
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="0"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="50"
                 android:alpha="0.5" />
             <KeyAttribute
-                app:motionTarget="@+id/image_search"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_map"
+                app:motionTarget="@+id/map_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="100"
                 android:alpha="0" />
             <KeyAttribute
-                app:motionTarget="@+id/image_house"
+                app:motionTarget="@+id/house_button"
                 app:framePosition="100"
                 android:alpha="1" />
         </KeyFrameSet>

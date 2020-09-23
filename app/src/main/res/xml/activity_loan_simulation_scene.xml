@@ -15,17 +15,19 @@
             android:alpha="0"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/image_loan"
+            android:id="@+id/loan_button"
             android:layout_marginTop="130dp" />
     </ConstraintSet>
 
     <Transition
         app:constraintSetEnd="@id/end"
         app:constraintSetStart="@+id/start"
-        android:id="@+id/loan_starting_transition" >
+        android:id="@+id/loan_starting_transition"
+        app:duration="2500"
+        app:autoTransition="animateToEnd">
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/image_loan"
+                app:motionTarget="@+id/loan_button"
                 app:framePosition="100"
                 android:alpha="1" />
         </KeyFrameSet>

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openclassrooms.realestatemanager.SecondActivity"
+    tools:context="com.openclassrooms.realestatemanager.activities.LoanActivity"
     app:layoutDescription="@xml/activity_loan_simulation_scene">
 
 
@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/image_loan"
+        android:id="@+id/loan_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:alpha="0"
