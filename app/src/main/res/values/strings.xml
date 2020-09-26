@@ -10,4 +10,8 @@
 
     <!-- Loan simulation activity -->
     <string name="title_loan_simulation">Loan simulation</string>
+    <string name="interest_rate">Interest rate :</string>
+    <string name="repayment_period">Repayment period :</string>
+    <string name="amount">Amount of the loan :</string>
+    <string name="monthly_payment">Monthly paiement :</string>
 </resources>

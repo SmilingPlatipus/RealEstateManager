@@ -3,14 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.openclassrooms.realestatemanager"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         packagingOptions {
             exclude 'META-INF/atomicfu.kotlin_module'
@@ -32,13 +32,12 @@ dependencies {
     // Android dependencies
 
     //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation "androidx.constraintlayout:constraintlayout:2.0.1"
 
     // Testing purposes
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     // Room components
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
@@ -55,6 +54,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines"
+
+    // Material components
+    implementation "com.google.android.material:material:1.2.1"
 
 
 
