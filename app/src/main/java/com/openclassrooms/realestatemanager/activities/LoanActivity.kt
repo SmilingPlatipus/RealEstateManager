@@ -35,7 +35,8 @@ class LoanActivity : AppCompatActivity() {
             override fun getFormattedValue(value: Float): String {
                 val temp = StringBuilder()
                 temp.append(value.roundToInt())
-                temp.append(" years")
+                temp.append(" ")
+                temp.append(getString(R.string.years))
                 return temp.toString()
             }
         })
@@ -68,7 +69,6 @@ class LoanActivity : AppCompatActivity() {
 
             }
         })
-
     }
 
     override fun onBackPressed() {
