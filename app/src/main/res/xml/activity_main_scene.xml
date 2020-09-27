@@ -65,8 +65,8 @@
         android:id="@+id/main_starting_animation"
         app:constraintSetStart="@+id/start"
         app:constraintSetEnd="@+id/end"
-        app:autoTransition="animateToEnd"
-        app:duration="2500">
+        app:duration="2500"
+        app:autoTransition="animateToEnd">
         <KeyFrameSet >
             <KeyAttribute
                 app:motionTarget="@+id/loan_button"

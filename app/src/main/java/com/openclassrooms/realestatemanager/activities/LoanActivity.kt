@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import com.google.android.material.slider.LabelFormatter
 import com.openclassrooms.realestatemanager.R
 import kotlinx.android.synthetic.main.activity_loan_simulation.*
@@ -72,7 +73,24 @@ class LoanActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        finish()
+        loan_simulation_motionLayout.transitionToStart()
+        loan_simulation_motionLayout?.setTransitionListener(object : MotionLayout.TransitionListener{
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+
+            }
+
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+
+            }
+
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                finish()
+            }
+
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+
+            }
+        })
     }
 
     fun calculateMonthlyPayment(
