@@ -62,7 +62,7 @@
     </ConstraintSet>
 
     <Transition
-        android:id="@+id/main_starting_animation"
+        android:id="@+id/main_starting_transition"
         app:constraintSetStart="@+id/start"
         app:constraintSetEnd="@+id/end"
         app:duration="2500"

@@ -30,6 +30,10 @@
                 app:motionTarget="@+id/loan_button"
                 app:framePosition="100"
                 android:alpha="1" />
+            <KeyAttribute
+                app:motionTarget="@+id/loan_button"
+                app:framePosition="0"
+                android:alpha="1" />
         </KeyFrameSet>
     </Transition>
 </MotionScene>

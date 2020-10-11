@@ -8,7 +8,15 @@ class EstateDataRepository (private val estateDao: EstateDao){
 
     val allEstates: LiveData<List<Estate>> = estateDao.getAll()
 
-    suspend fun insert(estate: Estate){
-        estateDao.insert(estate)
+    suspend fun insert(estate: Estate): Long{
+        return estateDao.insert(estate)
+    }
+
+    suspend fun update(estate: Estate){
+        estateDao.update(estate)
+    }
+
+    suspend fun deleteAll() {
+        estateDao.deleteAll()
     }
 }

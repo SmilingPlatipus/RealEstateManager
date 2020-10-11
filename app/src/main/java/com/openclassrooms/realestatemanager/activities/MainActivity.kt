@@ -1,14 +1,28 @@
 package com.openclassrooms.realestatemanager.activities
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.transition.TransitionManager
+import androidx.lifecycle.Observer
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.modules.mainModule
+import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.context.startKoin
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity() {
+
+    private val estateViewModel by viewModel<EstateViewModel>()
 
     enum class Activities {
         NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, OTHER_ACTIVITY1, OTHER_ACTIVITY2
@@ -20,7 +34,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        startKoin {
+            androidContext(this@MainActivity)
+            androidLogger()
+            modules(mainModule)
+        }
+
+
+        // Simple var allowing to know the activity from which we come from
         previousActivity = Activities.NO_PREVIOUS_ACTIVITY
+
+        estateViewModel.allEstates.observe(this, Observer {
+            // Todo : populating RecyclerView here
+            it.forEach { estate ->
+                Log.i("MainActivity", estate.toString())
+            }
+        })
+
     }
 
     override fun onResume() {
@@ -29,8 +60,8 @@ class MainActivity : AppCompatActivity() {
         when (previousActivity)
         {
             Activities.LOAN_ACTIVITY -> {
-                main_activity_motionLayout.setTransition(R.id.main_starting_animation)
-                main_activity_motionLayout.transitionToEnd()
+                main_activity_motionLayout.setTransition(R.id.loan_click_transition)
+                main_activity_motionLayout.transitionToStart()
             }
 
         }

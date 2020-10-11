@@ -1,27 +1,31 @@
 package com.openclassrooms.realestatemanager.viewModels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.openclassrooms.realestatemanager.db.EstateDatabase
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.repositories.EstateDataRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class EstateViewModel(application: Application) : AndroidViewModel(application) {
+class EstateViewModel(estateDataRepository: EstateDataRepository) : ViewModel() {
 
     private val repository: EstateDataRepository
     val allEstates: LiveData<List<Estate>>
 
     init {
-        val estatesDao = EstateDatabase.getEstateDataBase(application, viewModelScope).estateDao()
-        repository = EstateDataRepository(estatesDao)
+        repository = estateDataRepository
         allEstates = repository.allEstates
     }
 
     fun insert(estate: Estate) = viewModelScope.launch (Dispatchers.IO){
         repository.insert(estate)
+    }
+
+    fun update(estate: Estate) = viewModelScope.launch (Dispatchers.IO){
+        repository.update(estate)
+    }
+
+    fun deleteAll() = viewModelScope.launch (Dispatchers.IO){
+        repository.deleteAll()
     }
 }
