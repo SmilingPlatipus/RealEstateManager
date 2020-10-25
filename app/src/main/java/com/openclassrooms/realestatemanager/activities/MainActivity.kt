@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private val estateViewModel by viewModel<EstateViewModel>()
 
     enum class Activities {
-        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, OTHER_ACTIVITY1, OTHER_ACTIVITY2
+        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, SEARCH_ACTIVITY, OTHER_ACTIVITY2
     }
 
     lateinit var previousActivity : Activities
@@ -63,6 +63,10 @@ class MainActivity : AppCompatActivity() {
                 main_activity_motionLayout.setTransition(R.id.loan_click_transition)
                 main_activity_motionLayout.transitionToStart()
             }
+            Activities.SEARCH_ACTIVITY -> {
+                main_activity_motionLayout.setTransition(R.id.search_click_transition)
+                main_activity_motionLayout.transitionToStart()
+            }
 
         }
         main_activity_motionLayout?.setTransitionListener(object : MotionLayout.TransitionListener {
@@ -71,6 +75,11 @@ class MainActivity : AppCompatActivity() {
                     previousActivity = Activities.LOAN_ACTIVITY
                     startActivity(Intent(this@MainActivity, LoanActivity::class.java))
                 }
+                if (p1 == R.id.search_click_end){
+                    previousActivity = Activities.SEARCH_ACTIVITY
+                    startActivity(Intent(this@MainActivity, SearchActivity::class.java))
+                }
+
             }
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) { }
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) { }

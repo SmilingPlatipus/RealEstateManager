@@ -15,4 +15,26 @@
     <string name="amount">Amount of the loan :</string>
     <string name="monthly_payment">Monthly paiement :</string>
     <string name="years">years</string>
+
+    <!-- Search activity -->
+    <string name="title_search">Search for a real estate</string>
+    <string name="estate_type">Real estate type</string>
+    <string name="radioGroup_realEstateType_appartment">apartment</string>
+    <string name="radioGroup_realEstateType_house">house</string>
+    <string name="radioGroup_realEstateType_duplex">duplex</string>
+    <string name="radioGroup_realEstateType_penthouse">penthouse</string>
+    <string name="nearby_services">Nearby services</string>
+    <string name="radioGroup_nearbyServices_school">school</string>
+    <string name="checkbox_nearbyServices_hospital">hospital</string>
+    <string name="checkbox_nearbyServices_shops">shops</string>
+    <string name="checkbox_nearbyServices_park">park</string>
+    <string name="radioGroup_status_sold">sold</string>
+    <string name="radioGroup_status_forSale">for sale</string>
+    <string name="radioGroup_status_all">all</string>
+    <string name="status">Real estate status</string>
+    <string name="rangeSlider_price">price</string>
+    <string name="rangeSlider_size">size</string>
+    <string name="rangeSlider_rooms">number of rooms</string>
+    <string name="buttonSearch">search</string>
+    <string name="buttonReinitialize">reinitialize</string>
 </resources>

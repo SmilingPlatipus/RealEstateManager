@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loan_simulation_motionLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.openclassrooms.realestatemanager.activities.SearchActivity"
+    app:layoutDescription="@xml/activity_loan_simulation_scene">
+
+
+    <LinearLayout
+        android:id="@+id/header_loan_simulation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/rem_background"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/top_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/rem_icon_partial"
+            android:fontFamily="@font/im_fell_english_sc"
+            android:paddingTop="16dp"
+            android:text="@string/title_search"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/type_of_estate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/im_fell_english_sc"
+                    android:text="@string/estate_type"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroup_search_typeOfEstate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/type_of_estate" >
+                    <RadioButton
+                        android:id="@+id/radioButton_realEstateType_appartment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/radioGroup_realEstateType_appartment"/>
+                    <RadioButton
+                        android:id="@+id/radioButton_realEstateType_house"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/radioGroup_realEstateType_house"/>
+                    <RadioButton
+                        android:id="@+id/radioButton_realEstateType_duplex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/radioGroup_realEstateType_duplex"/>
+                    <RadioButton
+                        android:id="@+id/radioButton_realEstateType_penthouse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/radioGroup_realEstateType_penthouse"/>
+                </RadioGroup>
+                <TextView
+                    android:id="@+id/nearbyServices"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="@font/im_fell_english_sc"
+                    android:text="@string/nearby_services"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <CheckBox
+                    android:id="@+id/checkBox_hospital"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/checkbox_nearbyServices_hospital"
+                    app:layout_constraintTop_toBottomOf="@id/nearbyServices"
+                    app:layout_constraintStart_toStartOf="@id/nearbyServices"/>
+                <CheckBox
+                    android:id="@+id/checkBox_shops"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/checkbox_nearbyServices_shops"
+                    app:layout_constraintTop_toBottomOf="@id/checkBox_hospital"
+                    app:layout_constraintStart_toStartOf="@id/checkBox_hospital"/>
+                <CheckBox
+                    android:id="@+id/checkBox_park"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/checkbox_nearbyServices_park"
+                    app:layout_constraintTop_toBottomOf="@id/checkBox_shops"
+                    app:layout_constraintStart_toStartOf="@id/checkBox_shops"/>
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/im_fell_english_sc"
+                    android:text="@string/status"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/radioGroup_search_typeOfEstate" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroup_search_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/status" >
+                    <RadioButton
+                        android:id="@+id/radioButton_status_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/radioGroup_status_all"/>
+                    <RadioButton
+                        android:id="@+id/radioButton_status_forSale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/radioGroup_status_forSale"/>
+                    <RadioButton
+                        android:id="@+id/radioButton_status_sold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/radioGroup_status_sold"/>
+                </RadioGroup>
+                <TextView
+                    android:id="@+id/price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/im_fell_english_sc"
+                    android:text="@string/rangeSlider_price"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/radioGroup_search_status" />
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/rangeSlider_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:stepSize="20000"
+                    android:valueFrom="0"
+                    android:valueTo="3000000"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/price"/>
+                <TextView
+                    android:id="@+id/size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/im_fell_english_sc"
+                    android:text="@string/rangeSlider_size"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rangeSlider_price" />
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/rangeSlider_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:stepSize="5"
+                    android:valueFrom="0"
+                    android:valueTo="300"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rangeSlider_price"/>
+                <TextView
+                    android:id="@+id/rooms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/im_fell_english_sc"
+                    android:text="@string/rangeSlider_rooms"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rangeSlider_size" />
+                <com.google.android.material.slider.RangeSlider
+                    android:id="@+id/rangeSlider_rooms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="16dp"
+                    android:stepSize="1"
+                    android:valueFrom="0"
+                    android:valueTo="20"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rooms" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    app:layout_constraintTop_toBottomOf="@id/rangeSlider_rooms">
+
+                    <Button
+                        android:id="@+id/buttonSearch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/buttonSearch" />
+
+                    <Button
+                        android:id="@+id/button3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/buttonReinitialize" />
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/search_button"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:alpha="1"
+        android:background="@drawable/rem_search"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider_search"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/rem_icon_bar"
+        app:layout_constraintBottom_toTopOf="@id/bottom_scrolling_view" />
+
+    <HorizontalScrollView
+        android:id="@+id/bottom_scrolling_view"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layout_scrolling_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/maison1" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/maison2" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/maison3" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/maison4" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/maison5" />
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/maison6" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/maison7" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

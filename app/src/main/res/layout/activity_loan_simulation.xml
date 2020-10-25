@@ -41,7 +41,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/amount_loan"
+                android:id="@+id/type_of_estate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -62,10 +62,10 @@
                 android:valueFrom="0"
                 android:valueTo="3000000"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/amount_loan" />
+                app:layout_constraintTop_toBottomOf="@id/type_of_estate" />
 
             <TextView
-                android:id="@+id/repayment_period"
+                android:id="@+id/nearby_services"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -85,7 +85,7 @@
                 android:valueFrom="3"
                 android:valueTo="25"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/repayment_period" />
+                app:layout_constraintTop_toBottomOf="@id/nearby_services" />
 
             <TextView
                 android:id="@+id/interest_rate_text"

@@ -15,15 +15,6 @@
             android:alpha="0"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/loan_button"
-            android:layout_marginTop="130dp" />
-        <Constraint
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:alpha="1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/search_button"
             android:layout_marginTop="130dp" />
     </ConstraintSet>
@@ -31,16 +22,16 @@
     <Transition
         app:constraintSetEnd="@id/end"
         app:constraintSetStart="@+id/start"
-        android:id="@+id/loan_starting_transition"
+        android:id="@+id/search_starting_transition"
         app:duration="2500"
         app:autoTransition="animateToEnd">
         <KeyFrameSet >
             <KeyAttribute
-                app:motionTarget="@+id/loan_button"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="100"
                 android:alpha="1" />
             <KeyAttribute
-                app:motionTarget="@+id/loan_button"
+                app:motionTarget="@+id/search_button"
                 app:framePosition="0"
                 android:alpha="1" />
         </KeyFrameSet>
