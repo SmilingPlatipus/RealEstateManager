@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/loan_simulation_motionLayout"
+    android:id="@+id/search_motionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.openclassrooms.realestatemanager.activities.SearchActivity"
@@ -116,6 +116,13 @@
                     android:text="@string/checkbox_nearbyServices_park"
                     app:layout_constraintTop_toBottomOf="@id/checkBox_shops"
                     app:layout_constraintStart_toStartOf="@id/checkBox_shops"/>
+                <CheckBox
+                    android:id="@+id/checkBox_school"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/checkbox_nearbyServices_school"
+                    app:layout_constraintTop_toBottomOf="@id/checkBox_park"
+                    app:layout_constraintStart_toStartOf="@id/checkBox_park"/>
 
                 <TextView
                     android:id="@+id/status"
@@ -172,6 +179,7 @@
                     android:stepSize="20000"
                     android:valueFrom="0"
                     android:valueTo="3000000"
+                    app:values="@array/initValues_rangeSlider_price"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/price"/>
@@ -195,6 +203,7 @@
                     android:stepSize="5"
                     android:valueFrom="0"
                     android:valueTo="300"
+                    app:values="@array/initValues_rangeSlider_size"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rangeSlider_price"/>
@@ -219,11 +228,13 @@
                     android:stepSize="1"
                     android:valueFrom="0"
                     android:valueTo="20"
+                    app:values="@array/initValues_rangeSlider_rooms"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rooms" />
 
                 <LinearLayout
+                    android:id="@+id/layout_searchButtons"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
@@ -244,7 +255,11 @@
                         android:layout_weight="1"
                         android:text="@string/buttonReinitialize" />
                 </LinearLayout>
-
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:layout_constraintTop_toBottomOf="@id/layout_searchButtons" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -9,6 +9,8 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import com.google.android.material.slider.LabelFormatter
 import com.openclassrooms.realestatemanager.R
 import kotlinx.android.synthetic.main.activity_loan_simulation.*
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -62,7 +64,7 @@ class LoanActivity : AppCompatActivity() {
                 if (!p0.isNullOrEmpty()) {
                     Log.d(TAG, "onTextChanged: ${temp}")
                     interest_rate_value = temp.toFloat()
-                    monthly_payment_amount.setText(calculateMonthlyPayment(amount = slider_loan_value.toLong(), period = slider_period_value.toInt(), interest_rate_value).toString())
+                    monthly_payment_amount.setText(calculateMonthlyPayment(amount = slider_loan_value.toLong(), period = slider_period_value.toInt(), interest_rate_value).toString() + getString(R.string.currency_per_month))
                 }
             }
 
@@ -98,12 +100,14 @@ class LoanActivity : AppCompatActivity() {
             period : Int,
             interestRate : Float) : Double
     {
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.HALF_UP
         var power = (-12*period).toDouble()
         var denominator = 1 - (Math.pow(1 + (interestRate/100/12).toDouble(),power))
         var numerator = (amount * (interestRate/100/12))
         Log.d(TAG, "calculateMonthlyPayment: amount : ${amount} period : ${period} interestRate : ${interestRate} \n")
         Log.d(TAG, "calculateMonthlyPayment: formula : ${numerator} / ${denominator}")
-        return numerator / denominator
+        return df.format(numerator / denominator).toDouble()
     }
 
 }

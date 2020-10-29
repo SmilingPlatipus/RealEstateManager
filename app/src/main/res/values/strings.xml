@@ -15,6 +15,7 @@
     <string name="amount">Amount of the loan :</string>
     <string name="monthly_payment">Monthly paiement :</string>
     <string name="years">years</string>
+    <string name="currency_per_month">$/month</string>
 
     <!-- Search activity -->
     <string name="title_search">Search for a real estate</string>
@@ -28,6 +29,7 @@
     <string name="checkbox_nearbyServices_hospital">hospital</string>
     <string name="checkbox_nearbyServices_shops">shops</string>
     <string name="checkbox_nearbyServices_park">park</string>
+    <string name="checkbox_nearbyServices_school">school</string>
     <string name="radioGroup_status_sold">sold</string>
     <string name="radioGroup_status_forSale">for sale</string>
     <string name="radioGroup_status_all">all</string>
@@ -37,4 +39,6 @@
     <string name="rangeSlider_rooms">number of rooms</string>
     <string name="buttonSearch">search</string>
     <string name="buttonReinitialize">reinitialize</string>
+    <string name="rooms">rooms</string>
+    <string name="size">m²</string>
 </resources>
