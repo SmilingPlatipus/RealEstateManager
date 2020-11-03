@@ -26,6 +26,7 @@
     <string name="radioGroup_realEstateType_penthouse">penthouse</string>
     <string name="nearby_services">Nearby services</string>
     <string name="radioGroup_nearbyServices_school">school</string>
+    <string name="checkbox_nearbyServices_all">all</string>
     <string name="checkbox_nearbyServices_hospital">hospital</string>
     <string name="checkbox_nearbyServices_shops">shops</string>
     <string name="checkbox_nearbyServices_park">park</string>

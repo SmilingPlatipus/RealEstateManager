@@ -2,6 +2,10 @@ package com.openclassrooms.realestatemanager.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.CompoundButton
+import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionLayout.TransitionListener
@@ -12,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 
 class SearchActivity : AppCompatActivity() {
     val TAG: String = "SearchActivity"
@@ -22,6 +27,24 @@ class SearchActivity : AppCompatActivity() {
     var rangeSlider_size_maxValue : Float? = null
     var rangeSlider_rooms_minValue : Float? = null
     var rangeSlider_rooms_maxValue : Float? = null
+    var checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
+    var radioButton_estateType : EstateTypes? = null
+    var radioButton_searchStatus : SearchStatus? = null
+
+    enum class EstateTypes{
+        APPARTMENT, HOUSE, DUPLEX, PENTHOUSE
+    }
+
+    enum class SearchStatus{
+        ALL, FOR_SALE, SOLD
+    }
+
+    enum class NearbyServices{
+        HOSPITAL,
+        SHOPS,
+        PARK,
+        SCHOOL
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,25 +57,21 @@ class SearchActivity : AppCompatActivity() {
             format.format(value.toDouble())
         }
 
-        rangeSlider_rooms.setLabelFormatter(object : LabelFormatter {
-            override fun getFormattedValue(value: Float): String {
-                val temp = StringBuilder()
-                temp.append(value.roundToInt())
-                temp.append(" ")
-                temp.append(getString(R.string.rooms))
-                return temp.toString()
-            }
-        })
+        rangeSlider_rooms.setLabelFormatter { value ->
+            val temp = StringBuilder()
+            temp.append(value.roundToInt())
+            temp.append(" ")
+            temp.append(getString(R.string.rooms))
+            temp.toString()
+        }
 
-        rangeSlider_size.setLabelFormatter(object : LabelFormatter{
-            override fun getFormattedValue(value: Float): String {
-                val temp = StringBuilder()
-                temp.append(value.roundToInt())
-                temp.append(" ")
-                temp.append(getString(R.string.size))
-                return temp.toString()
-            }
-        })
+        rangeSlider_size.setLabelFormatter { value ->
+            val temp = StringBuilder()
+            temp.append(value.roundToInt())
+            temp.append(" ")
+            temp.append(getString(R.string.size))
+            temp.toString()
+        }
 
         rangeSlider_price.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener{
             override fun onStopTrackingTouch(slider: RangeSlider) {
@@ -93,6 +112,69 @@ class SearchActivity : AppCompatActivity() {
 
             }
         })
+
+        checkBox_all.setOnCheckedChangeListener { p0, p1 -> checkAllCheckboxes(p1) }
+
+        buttonSearch.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                // checking hospital checkbox
+                if (checkBox_hospital.isChecked())
+                    checkboxesStatus.add(NearbyServices.HOSPITAL)
+                else if (checkboxesStatus.contains(NearbyServices.HOSPITAL))
+                    checkboxesStatus.remove(NearbyServices.HOSPITAL)
+
+                // checking shops checkbox
+                if (checkBox_shops.isChecked())
+                    checkboxesStatus.add(NearbyServices.SHOPS)
+                else if (checkboxesStatus.contains(NearbyServices.SHOPS))
+                    checkboxesStatus.remove(NearbyServices.SHOPS)
+
+                // checking park checkbox
+                if (checkBox_park.isChecked())
+                    checkboxesStatus.add(NearbyServices.PARK)
+                else if (checkboxesStatus.contains(NearbyServices.PARK))
+                    checkboxesStatus.remove(NearbyServices.PARK)
+
+                // checking school checkbox
+                if (checkBox_school.isChecked())
+                    checkboxesStatus.add(NearbyServices.SCHOOL)
+                else if (checkboxesStatus.contains(NearbyServices.SCHOOL))
+                    checkboxesStatus.remove(NearbyServices.SCHOOL)
+
+                Log.i(TAG, "onClick: checkboxes_status : " + checkboxesStatus.toString())
+                Log.i(TAG, "onClick: radioButton_searchStatus : " + radioButton_searchStatus)
+                Log.i(TAG, "onClick: radioButton_estateType : " + radioButton_estateType)
+
+                if (radioButton_searchStatus == null)
+                    Toast.makeText(p0?.context, "You didn't select a real estate status, please do it", Toast.LENGTH_SHORT).show()
+
+                if (radioButton_estateType == null)
+                    Toast.makeText(p0?.context, "You didn't select a real estate type, please do it", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        radioGroup_search_status.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener{
+            override fun onCheckedChanged(p0: RadioGroup?, p1: Int) {
+                when(p0?.checkedRadioButtonId)
+                {
+                    R.id.radioButton_status_all -> radioButton_searchStatus = SearchStatus.ALL
+                    R.id.radioButton_status_forSale -> radioButton_searchStatus = SearchStatus.FOR_SALE
+                    R.id.radioButton_status_sold -> radioButton_searchStatus = SearchStatus.SOLD
+                }
+            }
+        })
+
+        radioGroup_search_typeOfEstate.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener{
+            override fun onCheckedChanged(p0: RadioGroup?, p1: Int) {
+                when(p0?.checkedRadioButtonId)
+                {
+                    R.id.radioButton_realEstateType_appartment -> radioButton_estateType = EstateTypes.APPARTMENT
+                    R.id.radioButton_realEstateType_house -> radioButton_estateType = EstateTypes.HOUSE
+                    R.id.radioButton_realEstateType_duplex -> radioButton_estateType = EstateTypes.DUPLEX
+                    R.id.radioButton_realEstateType_penthouse -> radioButton_estateType = EstateTypes.PENTHOUSE
+                }
+            }
+        })
     }
 
     override fun onBackPressed() {
@@ -113,6 +195,13 @@ class SearchActivity : AppCompatActivity() {
         })
 
 
+    }
+
+    private fun checkAllCheckboxes(switch : Boolean){
+        checkBox_hospital.setChecked(switch)
+        checkBox_park.setChecked(switch)
+        checkBox_school.setChecked(switch)
+        checkBox_shops.setChecked(switch)
     }
 
 }
