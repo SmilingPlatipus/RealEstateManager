@@ -146,10 +146,10 @@ class SearchActivity : AppCompatActivity() {
                 Log.i(TAG, "onClick: radioButton_estateType : " + radioButton_estateType)
 
                 if (radioButton_searchStatus == null)
-                    Toast.makeText(p0?.context, "You didn't select a real estate status, please do it", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(p0?.context, getString(R.string.search_status_not_selected), Toast.LENGTH_SHORT).show()
 
                 if (radioButton_estateType == null)
-                    Toast.makeText(p0?.context, "You didn't select a real estate type, please do it", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(p0?.context, getString(R.string.estate_type_not_selected), Toast.LENGTH_SHORT).show()
             }
         })
 

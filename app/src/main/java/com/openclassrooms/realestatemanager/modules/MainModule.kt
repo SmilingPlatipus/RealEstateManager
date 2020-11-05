@@ -2,11 +2,13 @@ package com.openclassrooms.realestatemanager.modules
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.dao.EstateDao
 import com.openclassrooms.realestatemanager.db.EstateDatabase
 import com.openclassrooms.realestatemanager.repositories.EstateDataRepository
@@ -42,7 +44,7 @@ val mainModule = module {
                         contentValues.put("rooms",5)
                         contentValues.put("description","Nice apartment on Long Island")
                         contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri","some Uri")
+                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison1)
                         contentValues.put("address","some address")
                         contentValues.put("status","for sale")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))

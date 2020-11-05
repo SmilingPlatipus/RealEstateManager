@@ -42,4 +42,6 @@
     <string name="buttonReinitialize">reinitialize</string>
     <string name="rooms">rooms</string>
     <string name="size">m²</string>
+    <string name="search_status_not_selected">You didn\'t select a real estate status, please do it</string>
+    <string name="estate_type_not_selected">You didn\'t select a real estate type, please do it</string>
 </resources>
