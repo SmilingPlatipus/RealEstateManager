@@ -6,16 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 
-class EstateListAdapter internal constructor(
+class EstateListAdapter constructor(
         context : Context
 ) : RecyclerView.Adapter<EstateListAdapter.EstateViewHolder>() {
     private val inflater : LayoutInflater = LayoutInflater.from(context)
-    private var estateList = emptyList<Estate>()
+    private var estateList : MutableList<Estate> = mutableListOf()
 
     inner class EstateViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         val image : ImageView = itemView.findViewById(R.id.cardview_image)
@@ -25,7 +26,7 @@ class EstateListAdapter internal constructor(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EstateListAdapter.EstateViewHolder {
-        val itemView = inflater.inflate(R.layout.estate_recyclerview, parent, false)
+        val itemView = inflater.inflate(R.layout.recyclerview_item, parent, false)
         return EstateViewHolder(itemView)
     }
 
@@ -35,12 +36,17 @@ class EstateListAdapter internal constructor(
                 .into(holder.image)
 
         holder.typeOfEstate.setText(estateList[position].type)
-        holder.cityOfEstate.setText(estateList[position].address)
+        holder.cityOfEstate.setText(estateList[position].address.last())
         holder.priceOfEstate.setText(estateList[position].price.toString())
     }
 
     override fun getItemCount(): Int {
         return estateList.size
+    }
+
+    fun setEstateList(estates : MutableList<Estate>){
+        this.estateList = estates
+        notifyDataSetChanged()
     }
 
 }

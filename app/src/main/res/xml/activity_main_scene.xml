@@ -15,9 +15,8 @@
         <Constraint
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_scrolling_view"
-            android:id="@+id/divider"
-            android:layout_marginBottom="0dp" />
+            app:layout_constraintBottom_toTopOf="@id/estatesView"
+            android:id="@+id/divider" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">

@@ -9,11 +9,10 @@ import kotlinx.coroutines.launch
 
 class EstateViewModel(estateDataRepository: EstateDataRepository) : ViewModel() {
 
-    private val repository: EstateDataRepository
-    val allEstates: LiveData<List<Estate>>
+    private val repository: EstateDataRepository = estateDataRepository
+    val allEstates: LiveData<MutableList<Estate>>
 
     init {
-        repository = estateDataRepository
         allEstates = repository.allEstates
     }
 

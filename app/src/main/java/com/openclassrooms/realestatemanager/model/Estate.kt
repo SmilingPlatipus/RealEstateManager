@@ -17,7 +17,8 @@ data class Estate (
         var rooms :Int,
         var description :String,
         var photoUri :String,
-        var address :String,
+        @TypeConverters(ListConverter::class)
+        var address :List<String>,
         @TypeConverters(ListConverter::class)
         var poi :List<String>,
         var status :String,

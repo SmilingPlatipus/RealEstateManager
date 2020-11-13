@@ -7,7 +7,7 @@ import com.openclassrooms.realestatemanager.model.Estate
 @Dao
 interface EstateDao{
     @Query("SELECT * FROM estate")
-    fun getAll(): LiveData<List<Estate>>
+    fun getAll(): LiveData<MutableList<Estate>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(estate: Estate): Long

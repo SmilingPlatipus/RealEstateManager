@@ -6,7 +6,7 @@ import com.openclassrooms.realestatemanager.model.Estate
 
 class EstateDataRepository (private val estateDao: EstateDao){
 
-    val allEstates: LiveData<List<Estate>> = estateDao.getAll()
+    val allEstates: LiveData<MutableList<Estate>> = estateDao.getAll()
 
     suspend fun insert(estate: Estate): Long{
         return estateDao.insert(estate)
