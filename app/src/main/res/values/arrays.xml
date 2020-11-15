@@ -12,4 +12,10 @@
         <item>4</item>
         <item>7</item>
     </string-array>
+    <string-array name="estate_types">
+        <item>apartment</item>
+        <item>house</item>
+        <item>duplex</item>
+        <item>penthouse</item>
+    </string-array>
 </resources>

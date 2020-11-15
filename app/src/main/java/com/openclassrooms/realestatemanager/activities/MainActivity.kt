@@ -2,27 +2,22 @@ package com.openclassrooms.realestatemanager.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Observer
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.adapters.EstateListAdapter
 import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
 import com.openclassrooms.realestatemanager.modules.mainModule
-import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.context.startKoin
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
     enum class Activities {
-        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, SEARCH_ACTIVITY, OTHER_ACTIVITY2
+        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, SEARCH_ACTIVITY, CREATE_ESTATE_ACTIVITY
     }
 
     lateinit var previousActivityWas : Activities
@@ -59,7 +54,10 @@ class MainActivity : AppCompatActivity() {
                 main_activity_motionLayout.setTransition(R.id.search_click_transition)
                 main_activity_motionLayout.transitionToStart()
             }
-
+            Activities.CREATE_ESTATE_ACTIVITY -> {
+                main_activity_motionLayout.setTransition(R.id.create_estate_click_transition)
+                main_activity_motionLayout.transitionToStart()
+            }
         }
         main_activity_motionLayout?.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
@@ -71,7 +69,10 @@ class MainActivity : AppCompatActivity() {
                     previousActivityWas = Activities.SEARCH_ACTIVITY
                     startActivity(Intent(this@MainActivity, SearchActivity::class.java))
                 }
-
+                if (p1 == R.id.create_estate_click_end){
+                    previousActivityWas = Activities.CREATE_ESTATE_ACTIVITY
+                    startActivity(Intent(this@MainActivity, CreateEstateActivity::class.java))
+                }
             }
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) { }
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) { }

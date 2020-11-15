@@ -12,11 +12,9 @@ import com.bumptech.glide.Glide
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 
-class EstateListAdapter constructor(
-        context : Context
-) : RecyclerView.Adapter<EstateListAdapter.EstateViewHolder>() {
+class EstateListAdapter (context : Context, list : MutableList<Estate>) : RecyclerView.Adapter<EstateListAdapter.EstateViewHolder>() {
     private val inflater : LayoutInflater = LayoutInflater.from(context)
-    private var estateList : MutableList<Estate> = mutableListOf()
+    private var estateList : MutableList<Estate> = list
 
     inner class EstateViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         val image : ImageView = itemView.findViewById(R.id.cardview_image)

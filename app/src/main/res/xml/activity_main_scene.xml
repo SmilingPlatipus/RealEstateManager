@@ -294,12 +294,12 @@
         </KeyFrameSet>
     </Transition>
     <ConstraintSet
-        android:id="@+id/house_click_end"
+        android:id="@+id/create_estate_click_end"
         app:deriveConstraintsFrom="@+id/start" />
     <Transition
-        android:id="@+id/house_click_transition"
+        android:id="@+id/create_estate_click_transition"
         app:constraintSetStart="@+id/end"
-        app:constraintSetEnd="@+id/house_click_end"
+        app:constraintSetEnd="@+id/create_estate_click_end"
         app:duration="2500">
         <OnClick app:targetId="@+id/house_button" />
         <KeyFrameSet >

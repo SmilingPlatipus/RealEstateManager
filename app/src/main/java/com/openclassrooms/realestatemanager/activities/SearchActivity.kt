@@ -3,20 +3,17 @@ package com.openclassrooms.realestatemanager.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.CompoundButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionLayout.TransitionListener
-import com.google.android.material.slider.LabelFormatter
 import com.google.android.material.slider.RangeSlider
 import com.openclassrooms.realestatemanager.R
 import kotlinx.android.synthetic.main.activity_search.*
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
-import kotlin.properties.Delegates
 
 class SearchActivity : AppCompatActivity() {
     val TAG: String = "SearchActivity"
@@ -32,7 +29,7 @@ class SearchActivity : AppCompatActivity() {
     var radioButton_searchStatus : SearchStatus? = null
 
     enum class EstateTypes{
-        APPARTMENT, HOUSE, DUPLEX, PENTHOUSE
+        APARTMENT, HOUSE, DUPLEX, PENTHOUSE
     }
 
     enum class SearchStatus{
@@ -168,7 +165,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onCheckedChanged(p0: RadioGroup?, p1: Int) {
                 when(p0?.checkedRadioButtonId)
                 {
-                    R.id.radioButton_realEstateType_appartment -> radioButton_estateType = EstateTypes.APPARTMENT
+                    R.id.radioButton_realEstateType_appartment -> radioButton_estateType = EstateTypes.APARTMENT
                     R.id.radioButton_realEstateType_house -> radioButton_estateType = EstateTypes.HOUSE
                     R.id.radioButton_realEstateType_duplex -> radioButton_estateType = EstateTypes.DUPLEX
                     R.id.radioButton_realEstateType_penthouse -> radioButton_estateType = EstateTypes.PENTHOUSE
@@ -198,10 +195,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun checkAllCheckboxes(switch : Boolean){
-        checkBox_hospital.setChecked(switch)
-        checkBox_park.setChecked(switch)
-        checkBox_school.setChecked(switch)
-        checkBox_shops.setChecked(switch)
+        checkBox_hospital.isChecked = switch
+        checkBox_park.isChecked = switch
+        checkBox_school.isChecked = switch
+        checkBox_shops.isChecked = switch
     }
 
 }

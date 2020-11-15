@@ -28,8 +28,7 @@ class RecyclerViewFragment : Fragment() {
         val view = inflater.inflate(R.layout.estate_recyclerview,container,false)
 
         estateViewModel.allEstates.observe(requireActivity()) {
-            adapter = EstateListAdapter(view.context)
-            adapter.setEstateList(it)
+            adapter = EstateListAdapter(view.context,it)
             recyclerview = view.findViewById(R.id.estate_list)
             val layoutManager = LinearLayoutManager(view.context,LinearLayoutManager.HORIZONTAL,false)
             recyclerview.adapter = adapter
