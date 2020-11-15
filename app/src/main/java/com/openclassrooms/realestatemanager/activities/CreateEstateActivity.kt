@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -228,13 +229,26 @@ class CreateEstateActivity : Activity()  {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
             val photo : Bitmap = data?.extras?.get("data") as Bitmap
-            var photoThumbnail : TextView = TextView(this)
-            val closeImage = ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null)
-            closeImage?.setBounds(0,0,24,24)
-            photoThumbnail.background =  BitmapDrawable(resources,photo)
-            photoThumbnail.setCompoundDrawables(null, null,closeImage,null)
-            photos.addView(photoThumbnail)
-            handlePhotoCloseEvent(photoThumbnail)
+
+            var newPhotoLayout : RelativeLayout = RelativeLayout(this)
+            newPhotoLayout.background = BitmapDrawable(resources,photo)
+            var newCloseButton : ImageButton = ImageButton(this)
+            newCloseButton.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null))
+            var layoutParams : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(250,250)
+            newPhotoLayout.layoutParams = layoutParams
+            var layoutParams2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(24,24)
+            layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_END)
+            layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            layoutParams2.setMargins(16,16,16,16)
+            newCloseButton.layoutParams = layoutParams2
+            newCloseButton.setOnClickListener(object : View.OnClickListener{
+                override fun onClick(v: View?) {
+                    photos.removeView(newPhotoLayout)
+                }
+            })
+            newPhotoLayout.addView(newCloseButton)
+            photos.addView(newPhotoLayout)
+
         }
     }
 
@@ -248,22 +262,5 @@ class CreateEstateActivity : Activity()  {
     companion object {
         const val CAMERA_REQUEST = 1888
         const val CAMERA_PERMISSION_CODE = 100
-    }
-
-    private fun handlePhotoCloseEvent(customPhoto: TextView){
-        customPhoto.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                Log.i(TAG, "onTouch: "+ event?.action)
-                if (event?.action == MotionEvent.ACTION_DOWN) {
-                    Log.i(TAG, "onTouch: rawX : ${event.rawX}")
-                    Log.i(TAG, "onTouch: dimension :" + (customPhoto.right - customPhoto.compoundDrawables[2].bounds.width()))
-                    if (event?.rawX >= (customPhoto.right - customPhoto.compoundDrawables[2].bounds.width())) {
-                        photos.removeView(customPhoto)
-                        return true
-                    }
-                }
-                return false
-            }
-        })
     }
 }

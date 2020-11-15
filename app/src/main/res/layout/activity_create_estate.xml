@@ -314,14 +314,18 @@
                         android:layout_weight="1"
                         android:text="@string/create_estate_photoText" />
 
-                    <LinearLayout
-                        android:id="@+id/photos"
+                    <HorizontalScrollView
+                        android:id="@+id/scrollview_photos"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:orientation="horizontal">
 
-                    </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/photos"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"/>
+                    </HorizontalScrollView>
                 </LinearLayout>
                 <View
                     android:id="@+id/divider2"
