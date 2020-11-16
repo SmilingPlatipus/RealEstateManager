@@ -1,17 +1,16 @@
 package com.openclassrooms.realestatemanager.activities
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.widget.*
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
@@ -175,6 +174,8 @@ class CreateEstateActivity : Activity()  {
                 checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
                 create_estate_checkBox_all.isChecked = false
                 checkAllCheckboxes(switch = false)
+
+                photos.removeAllViewsInLayout()
             }
         })
         buttonPhotos_take.setOnClickListener(object : View.OnClickListener{
@@ -228,26 +229,62 @@ class CreateEstateActivity : Activity()  {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
+
+            // This is the photo taken by the user
             val photo : Bitmap = data?.extras?.get("data") as Bitmap
 
-            var newPhotoLayout : RelativeLayout = RelativeLayout(this)
-            newPhotoLayout.background = BitmapDrawable(resources,photo)
+            // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
+            var newThumbnail : RelativeLayout = RelativeLayout(this)
+            newThumbnail.background = BitmapDrawable(resources,photo)
             var newCloseButton : ImageButton = ImageButton(this)
             newCloseButton.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null))
-            var layoutParams : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(250,250)
-            newPhotoLayout.layoutParams = layoutParams
-            var layoutParams2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(24,24)
-            layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_END)
-            layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-            layoutParams2.setMargins(16,16,16,16)
-            newCloseButton.layoutParams = layoutParams2
+            newThumbnail.layoutParams = RelativeLayout.LayoutParams(250,250)
+            var layoutParams : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(40,40)
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            layoutParams.setMargins(16,16,16,16)
+            newCloseButton.layoutParams = layoutParams
             newCloseButton.setOnClickListener(object : View.OnClickListener{
                 override fun onClick(v: View?) {
-                    photos.removeView(newPhotoLayout)
+                    photos.removeView(newThumbnail)
                 }
             })
-            newPhotoLayout.addView(newCloseButton)
-            photos.addView(newPhotoLayout)
+            newThumbnail.addView(newCloseButton)
+            photos.addView(newThumbnail)
+
+            // Show the picture fullscreen on user touch
+            newThumbnail.setOnClickListener(object : View.OnClickListener{
+                override fun onClick(v: View?) {
+                    // Creating the layout
+                    var fullscreenPicture : RelativeLayout = RelativeLayout(v?.context)
+                    fullscreenPicture.background = BitmapDrawable(resources,photo)
+                    fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT)
+                    var newCloseButton2 : ImageButton = ImageButton(v?.context)
+                    newCloseButton2.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null))
+                    newCloseButton2.layoutParams = layoutParams
+                    var newEditText : EditText = EditText(v?.context)
+                    newEditText.inputType = InputType.TYPE_CLASS_TEXT
+                    var layoutParams2 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT)
+                    layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    newEditText.layoutParams = layoutParams2
+                    fullscreenPicture.addView(newEditText)
+                    fullscreenPicture.addView(newCloseButton2)
+
+                    // Then adding t to a dialog window
+                    var dialogWindow : Dialog? = v?.context?.let { Dialog(it,android.R.style.Theme_NoTitleBar_Fullscreen) }
+                    dialogWindow?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                    dialogWindow?.setContentView(fullscreenPicture)
+                    dialogWindow?.show()
+
+
+                    newCloseButton2.setOnClickListener(object : View.OnClickListener{
+                        override fun onClick(v: View?) {
+                            //if (!newEditText.text.isEmpty())
+                            dialogWindow?.dismiss()
+                        }
+                    })
+                }
+            })
 
         }
     }
