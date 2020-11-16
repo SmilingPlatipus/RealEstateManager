@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
 import android.util.Log
 import android.view.View
@@ -229,57 +230,74 @@ class CreateEstateActivity : Activity()  {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
-
             // This is the photo taken by the user
             val photo : Bitmap = data?.extras?.get("data") as Bitmap
 
             // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
             var newThumbnail : RelativeLayout = RelativeLayout(this)
             newThumbnail.background = BitmapDrawable(resources,photo)
-            var newCloseButton : ImageButton = ImageButton(this)
-            newCloseButton.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null))
+            var closeButtonThumbnail : ImageButton = ImageButton(this)
+            closeButtonThumbnail.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null))
             newThumbnail.layoutParams = RelativeLayout.LayoutParams(250,250)
-            var layoutParams : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(40,40)
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-            layoutParams.setMargins(16,16,16,16)
-            newCloseButton.layoutParams = layoutParams
-            newCloseButton.setOnClickListener(object : View.OnClickListener{
+            var layoutParamsForCloseButton : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(40,40)
+            layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_END)
+            layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            layoutParamsForCloseButton.setMargins(16,16,16,16)
+            closeButtonThumbnail.layoutParams = layoutParamsForCloseButton
+            closeButtonThumbnail.setOnClickListener(object : View.OnClickListener{
                 override fun onClick(v: View?) {
                     photos.removeView(newThumbnail)
                 }
             })
-            newThumbnail.addView(newCloseButton)
+            newThumbnail.addView(closeButtonThumbnail)
             photos.addView(newThumbnail)
 
-            // Show the picture fullscreen on user touch
+            // Show the picture fullscreen on user touch on it
             newThumbnail.setOnClickListener(object : View.OnClickListener{
                 override fun onClick(v: View?) {
                     // Creating the layout
                     var fullscreenPicture : RelativeLayout = RelativeLayout(v?.context)
                     fullscreenPicture.background = BitmapDrawable(resources,photo)
                     fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT)
-                    var newCloseButton2 : ImageButton = ImageButton(v?.context)
-                    newCloseButton2.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null))
-                    newCloseButton2.layoutParams = layoutParams
-                    var newEditText : EditText = EditText(v?.context)
-                    newEditText.inputType = InputType.TYPE_CLASS_TEXT
+                    var closeButtonFullscreen : ImageButton = ImageButton(v?.context)
+                    closeButtonFullscreen.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_close_24,null))
+                    closeButtonFullscreen.layoutParams = layoutParamsForCloseButton
+                    var userFullscreenDescription : EditText = EditText(v?.context)
+                    userFullscreenDescription.inputType = InputType.TYPE_CLASS_TEXT
                     var layoutParams2 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT)
                     layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                    newEditText.layoutParams = layoutParams2
-                    fullscreenPicture.addView(newEditText)
-                    fullscreenPicture.addView(newCloseButton2)
+                    userFullscreenDescription.layoutParams = layoutParams2
+                    fullscreenPicture.addView(userFullscreenDescription)
+                    fullscreenPicture.addView(closeButtonFullscreen)
 
-                    // Then adding t to a dialog window
+                    // Retrieving description, if there is one
+                    if (newThumbnail.childCount == 2)
+                    {
+                        var retrievedDescription : TextView = newThumbnail.getChildAt(1) as TextView
+                        userFullscreenDescription.setText(retrievedDescription.hint)
+                        newThumbnail.removeViewAt(1)
+                    }
+
+                    // Then adding it to a dialog window
                     var dialogWindow : Dialog? = v?.context?.let { Dialog(it,android.R.style.Theme_NoTitleBar_Fullscreen) }
                     dialogWindow?.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     dialogWindow?.setContentView(fullscreenPicture)
                     dialogWindow?.show()
 
 
-                    newCloseButton2.setOnClickListener(object : View.OnClickListener{
+                    closeButtonFullscreen.setOnClickListener(object : View.OnClickListener{
                         override fun onClick(v: View?) {
-                            //if (!newEditText.text.isEmpty())
+                            if (userFullscreenDescription.text.isNotEmpty())
+                            {
+                                var layoutParams3 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT)
+                                layoutParams3.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                                layoutParams3.setMargins(16,16,16,16)
+                                var description : TextView = TextView(v?.context)
+                                description.layoutParams = layoutParams3
+                                description.hint = userFullscreenDescription.text
+                                description.setHintTextColor(getColor(R.color.colorPrimary))
+                                newThumbnail.addView(description)
+                            }
                             dialogWindow?.dismiss()
                         }
                     })
