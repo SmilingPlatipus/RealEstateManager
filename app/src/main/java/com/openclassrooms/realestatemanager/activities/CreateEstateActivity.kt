@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
@@ -21,6 +23,7 @@ import com.google.android.material.slider.Slider
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.EstatePhoto
 import kotlinx.android.synthetic.main.activity_create_estate.*
+import java.io.InputStream
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -251,7 +254,27 @@ class CreateEstateActivity : Activity()  {
         {
             // This is the photo taken by the user
             CAMERA_REQUEST -> photo = data?.extras?.get("data") as Bitmap
-            LOAD_IMG_REQUEST -> photo = BitmapFactory.decodeStream(data?.data?.let { contentResolver.openInputStream(it) })
+            // This is the photo taken from gallery, rotated in the right side
+            LOAD_IMG_REQUEST -> {
+                photo = BitmapFactory.decodeStream(data?.data?.let { contentResolver.openInputStream(it) })
+                lateinit var exif: ExifInterface
+                var matrix: Matrix = Matrix()
+                val uri: Uri? = data?.data
+                val inputStream : InputStream? = uri?.let { contentResolver.openInputStream(it) }
+                if (inputStream != null) {
+                    exif = ExifInterface(inputStream)
+                    when(exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1))
+                    {
+                        ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+                        ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+                        ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+                    }
+
+                    photo = Bitmap.createBitmap(photo,0,0,photo.width,photo.height,matrix,true)
+                }
+
+
+            }
         }
 
             // Adding photo uri to the list to be saved
