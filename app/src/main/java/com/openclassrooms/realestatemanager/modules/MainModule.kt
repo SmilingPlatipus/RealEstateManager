@@ -56,6 +56,7 @@ val mainModule = module {
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
 
+
                         poi = listOf("park","shops")
                         address = listOf("160","Rue des Cadourques","46000","Cahors")
 
@@ -175,6 +176,8 @@ val mainModule = module {
                         contentValues.put("longitude", 1.436329)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+
+
                     }
 
                 })

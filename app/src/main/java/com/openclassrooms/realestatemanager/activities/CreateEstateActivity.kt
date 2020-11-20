@@ -2,6 +2,8 @@ package com.openclassrooms.realestatemanager.activities
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -10,21 +12,28 @@ import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.media.ExifInterface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.slider.Slider
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.EstatePhoto
 import kotlinx.android.synthetic.main.activity_create_estate.*
-import java.io.InputStream
+import java.io.*
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -37,8 +46,14 @@ class CreateEstateActivity : Activity()  {
     var slider_rooms_value : Float? = null
     var slider_size_value : Float? = null
     var checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
+
+    lateinit var photo: Bitmap
     var photoList: MutableList<EstatePhoto> = emptyList<EstatePhoto>().toMutableList()
     lateinit var uriPhoto : Uri
+    lateinit var outputFile : File
+    var timestamp : String = String()
+    var filename : StringBuilder = StringBuilder()
+    var storageDir : File? = null
 
     enum class NearbyServices{
         HOSPITAL,
@@ -190,21 +205,34 @@ class CreateEstateActivity : Activity()  {
         })
         buttonPhotos_take.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                if (v?.context?.let { ContextCompat.checkSelfPermission(it, android.Manifest.permission.CAMERA) } != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
-                } else {
-                    //uriPhoto = Uri.fromFile(File(Environment.getExternalStorageState() + File.separator.toString() + "images"+ File.separator.toString()+ "photo"+photoList.size+".png"))
-                    var cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST)
+                when {
+                    v?.context?.let { ContextCompat.checkSelfPermission(it, android.Manifest.permission.CAMERA) } != PackageManager.PERMISSION_GRANTED ->
+                        requestPermissions(arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
+                    v?.context?.let { ContextCompat.checkSelfPermission(it, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) } != PackageManager.PERMISSION_GRANTED ->
+                        requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_PERMISSION_CODE)
+                    else -> {
+                        var cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+                        timestamp = SimpleDateFormat("ddMMyyyy_HHmmss").format(Date())
+                        filename = StringBuilder("pic${timestamp}")
+                        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                        outputFile = createTempFile(
+                                filename.toString(),
+                                ".jpg",
+                                storageDir
+                        )
+                        uriPhoto = FileProvider.getUriForFile(v.context, BuildConfig.APPLICATION_ID + ".fileprovider", outputFile)
+                        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhoto)
+                        startActivityForResult(cameraIntent, CAMERA_REQUEST)
+                    }
                 }
             }
         })
 
-        buttonPhotos_gallery.setOnClickListener(object : View.OnClickListener{
+        buttonPhotos_gallery.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val photoPickerIntent : Intent = Intent(Intent.ACTION_PICK)
+                val photoPickerIntent: Intent = Intent(Intent.ACTION_PICK)
                 photoPickerIntent.setType("image/")
-                startActivityForResult(photoPickerIntent,LOAD_IMG_REQUEST)
+                startActivityForResult(photoPickerIntent, LOAD_IMG_REQUEST)
             }
         })
     }
@@ -231,54 +259,55 @@ class CreateEstateActivity : Activity()  {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == CAMERA_PERMISSION_CODE)
-        {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                var cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(cameraIntent, CAMERA_REQUEST)
-            }
-            else
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
-        }
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Camera permission is needed by the application", Toast.LENGTH_SHORT).show()
+
+        if (requestCode == WRITE_EXTERNAL_PERMISSION_CODE)
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Write external storage permission is needed by the application", Toast.LENGTH_SHORT).show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK)
         {
-            Toast.makeText(this,"Something went wrong", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
             return
         }
-        lateinit var photo: Bitmap
 
         when (requestCode)
         {
-            // This is the photo taken by the user
-            CAMERA_REQUEST -> photo = data?.extras?.get("data") as Bitmap
+            // This is the photo taken by the user (saved in the gallery for testing purposes)
+            CAMERA_REQUEST -> {
+                // photo taken by user, as a bitmap
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    photo = BitmapFactory.decodeFile(outputFile.absolutePath)
+                }
+
+                // Saving it to gallery
+                savePhotoToSdCard(this, uriPhoto)
+            }
             // This is the photo taken from gallery, rotated in the right side
             LOAD_IMG_REQUEST -> {
                 photo = BitmapFactory.decodeStream(data?.data?.let { contentResolver.openInputStream(it) })
                 lateinit var exif: ExifInterface
                 var matrix: Matrix = Matrix()
                 val uri: Uri? = data?.data
-                val inputStream : InputStream? = uri?.let { contentResolver.openInputStream(it) }
+                val inputStream: InputStream? = uri?.let { contentResolver.openInputStream(it) }
                 if (inputStream != null) {
                     exif = ExifInterface(inputStream)
-                    when(exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1))
-                    {
+                    when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)) {
                         ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
                         ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
                         ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
                     }
-
-                    photo = Bitmap.createBitmap(photo,0,0,photo.width,photo.height,matrix,true)
+                    photo = Bitmap.createBitmap(photo, 0, 0, photo.width, photo.height, matrix, true)
                 }
-
-
             }
         }
 
             // Adding photo uri to the list to be saved
-            //photoList.add(EstatePhoto(uriPhoto))
+            photoList.add(EstatePhoto(uriPhoto))
 
             // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
             var newThumbnail : RelativeLayout = RelativeLayout(this)
@@ -294,7 +323,8 @@ class CreateEstateActivity : Activity()  {
             closeButtonThumbnail.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View?) {
                     photos.removeView(newThumbnail)
-                    //photoList.remove(EstatePhoto(uriPhoto))
+                    photoList.remove(EstatePhoto(uriPhoto))
+                    outputFile.delete()
                 }
             })
             newThumbnail.addView(closeButtonThumbnail)
@@ -343,7 +373,7 @@ class CreateEstateActivity : Activity()  {
                                 description.hint = userFullscreenDescription.text
                                 description.setHintTextColor(getColor(R.color.colorPrimary))
                                 newThumbnail.addView(description)
-                                //photoList.set(photoList.indexOf(EstatePhoto(uriPhoto)), EstatePhoto(uriPhoto,description.hint.toString()))
+                                photoList.set(photoList.indexOf(EstatePhoto(uriPhoto)), EstatePhoto(uriPhoto, description.hint.toString()))
                             }
                             dialogWindow?.dismiss()
                         }
@@ -353,6 +383,29 @@ class CreateEstateActivity : Activity()  {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun savePhotoToSdCard(context: Context, uriPhoto: Uri) {
+
+        var values : ContentValues = ContentValues()
+        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        values.put(MediaStore.MediaColumns.DATE_TAKEN, timestamp)
+        values.put(MediaStore.MediaColumns.IS_PENDING, true)
+
+        val uri : Uri? = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        if (uri != null)
+        {
+            var outputStream = ByteArrayOutputStream()
+            photo.compress(Bitmap.CompressFormat.JPEG, 100,outputStream)
+            var photoData : ByteArray = outputStream.toByteArray()
+
+            var fileOutputStream = FileOutputStream(outputFile)
+            fileOutputStream.write(photoData)
+            fileOutputStream.flush()
+            fileOutputStream.close()
+        }
+    }
+
     private fun checkAllCheckboxes(switch: Boolean) {
         create_estate_checkBox_hospital.isChecked = switch
         create_estate_checkBox_park.isChecked = switch
@@ -360,8 +413,10 @@ class CreateEstateActivity : Activity()  {
         create_estate_checkBox_shops.isChecked = switch
     }
 
+
     companion object {
         const val CAMERA_REQUEST = 1888
         const val CAMERA_PERMISSION_CODE = 100
+        const val WRITE_EXTERNAL_PERMISSION_CODE = 101
     }
 }
