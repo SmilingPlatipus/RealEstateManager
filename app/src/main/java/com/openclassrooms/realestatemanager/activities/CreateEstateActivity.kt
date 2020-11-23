@@ -39,7 +39,6 @@ import kotlin.math.roundToInt
 
 class CreateEstateActivity : Activity()  {
     val TAG: String = "CreateEstateActivity"
-    val LOAD_IMG_REQUEST: Int = 1
 
     var spinner_selection : String? = null
     var slider_price_value : Float? = null
@@ -51,9 +50,6 @@ class CreateEstateActivity : Activity()  {
     var photoList: MutableList<EstatePhoto> = emptyList<EstatePhoto>().toMutableList()
     lateinit var uriPhoto : Uri
     lateinit var outputFile : File
-    var timestamp : String = String()
-    var filename : StringBuilder = StringBuilder()
-    var storageDir : File? = null
 
     enum class NearbyServices{
         HOSPITAL,
@@ -212,14 +208,8 @@ class CreateEstateActivity : Activity()  {
                         requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_PERMISSION_CODE)
                     else -> {
                         var cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-                        timestamp = SimpleDateFormat("ddMMyyyy_HHmmss").format(Date())
-                        filename = StringBuilder("pic${timestamp}")
-                        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                        outputFile = createTempFile(
-                                filename.toString(),
-                                ".jpg",
-                                storageDir
-                        )
+
+                        outputFile = createNewJpegFile()
                         uriPhoto = FileProvider.getUriForFile(v.context, BuildConfig.APPLICATION_ID + ".fileprovider", outputFile)
                         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhoto)
                         startActivityForResult(cameraIntent, CAMERA_REQUEST)
@@ -235,6 +225,15 @@ class CreateEstateActivity : Activity()  {
                 startActivityForResult(photoPickerIntent, LOAD_IMG_REQUEST)
             }
         })
+    }
+
+    private fun createNewJpegFile(): File {
+        val timestamp = SimpleDateFormat("ddMMyyyy_").format(Date())
+        val filename = StringBuilder("pic${timestamp}")
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return createTempFile(filename.toString(),
+                ".jpg",
+                storageDir)
     }
 
     override fun onBackPressed() {
@@ -274,7 +273,8 @@ class CreateEstateActivity : Activity()  {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
             return
         }
-
+        val uri: Uri? = data?.data
+        var inputStream = uri?.let { contentResolver.openInputStream(it) }
         when (requestCode)
         {
             // This is the photo taken by the user (saved in the gallery for testing purposes)
@@ -283,112 +283,115 @@ class CreateEstateActivity : Activity()  {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     photo = BitmapFactory.decodeFile(outputFile.absolutePath)
                 }
-
-                // Saving it to gallery
-                savePhotoToSdCard(this, uriPhoto)
             }
             // This is the photo taken from gallery, rotated in the right side
             LOAD_IMG_REQUEST -> {
                 photo = BitmapFactory.decodeStream(data?.data?.let { contentResolver.openInputStream(it) })
-                lateinit var exif: ExifInterface
-                var matrix: Matrix = Matrix()
-                val uri: Uri? = data?.data
-                val inputStream: InputStream? = uri?.let { contentResolver.openInputStream(it) }
-                if (inputStream != null) {
-                    exif = ExifInterface(inputStream)
-                    when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)) {
-                        ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
-                        ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
-                        ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
-                    }
-                    photo = Bitmap.createBitmap(photo, 0, 0, photo.width, photo.height, matrix, true)
-                }
+                outputFile = createNewJpegFile()
             }
         }
+        val matrix = turnPhotoTheRightWay(inputStream)
+        photo = Bitmap.createBitmap(photo, 0, 0, photo.width, photo.height, matrix, true)
+        // Saving selected image into the external directory of the app
+        uriPhoto = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", outputFile)
+        savePhotoToTelephone(this, photo, uriPhoto)
+        // Adding photo uri to the list to be saved
+        photoList.add(EstatePhoto(uriPhoto))
+        photoList.forEach {
+            Log.i(TAG, "onActivityResult: photoList : ${it}")
+        }
 
-            // Adding photo uri to the list to be saved
-            photoList.add(EstatePhoto(uriPhoto))
+        // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
+        var newThumbnail : RelativeLayout = RelativeLayout(this)
+        newThumbnail.background = BitmapDrawable(resources, photo)
+        var closeButtonThumbnail : ImageButton = ImageButton(this)
+        closeButtonThumbnail.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
+        newThumbnail.layoutParams = RelativeLayout.LayoutParams(250, 250)
+        var layoutParamsForCloseButton : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(40, 40)
+        layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_END)
+        layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+        layoutParamsForCloseButton.setMargins(16, 16, 16, 16)
+        closeButtonThumbnail.layoutParams = layoutParamsForCloseButton
+        closeButtonThumbnail.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                photos.removeView(newThumbnail)
+                photoList.remove(EstatePhoto(uriPhoto))
+                outputFile.delete()
+            }
+        })
+        newThumbnail.addView(closeButtonThumbnail)
+        photos.addView(newThumbnail)
+        // Show the picture fullscreen on user touch on it
+        newThumbnail.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
 
-            // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
-            var newThumbnail : RelativeLayout = RelativeLayout(this)
-            newThumbnail.background = BitmapDrawable(resources, photo)
-            var closeButtonThumbnail : ImageButton = ImageButton(this)
-            closeButtonThumbnail.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
-            newThumbnail.layoutParams = RelativeLayout.LayoutParams(250, 250)
-            var layoutParamsForCloseButton : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(40, 40)
-            layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_END)
-            layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-            layoutParamsForCloseButton.setMargins(16, 16, 16, 16)
-            closeButtonThumbnail.layoutParams = layoutParamsForCloseButton
-            closeButtonThumbnail.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(v: View?) {
-                    photos.removeView(newThumbnail)
-                    photoList.remove(EstatePhoto(uriPhoto))
-                    outputFile.delete()
+                // Getting the right thumbnail to draw fullscreen
+                val indexOfThumbnail = photos.indexOfChild(v)
+                var thumbnailToDrawFullscreen = v?.context?.contentResolver?.openInputStream(photoList[indexOfThumbnail].uri)
+
+                // Creating the layout
+                var fullscreenPicture: RelativeLayout = RelativeLayout(v?.context)
+                fullscreenPicture.background = BitmapDrawable(resources, thumbnailToDrawFullscreen)
+                fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
+                var closeButtonFullscreen: ImageButton = ImageButton(v?.context)
+                closeButtonFullscreen.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
+                closeButtonFullscreen.layoutParams = layoutParamsForCloseButton
+                var userFullscreenDescription: EditText = EditText(v?.context)
+                userFullscreenDescription.inputType = InputType.TYPE_CLASS_TEXT
+                var layoutParams2 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+                layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                userFullscreenDescription.layoutParams = layoutParams2
+                fullscreenPicture.addView(userFullscreenDescription)
+                fullscreenPicture.addView(closeButtonFullscreen)
+                // Retrieving description, if there is one
+                if (newThumbnail.childCount == 2) {
+                    var retrievedDescription: TextView = newThumbnail.getChildAt(1) as TextView
+                    userFullscreenDescription.setText(retrievedDescription.hint)
+                    newThumbnail.removeViewAt(1)
                 }
-            })
-            newThumbnail.addView(closeButtonThumbnail)
-            photos.addView(newThumbnail)
-
-            // Show the picture fullscreen on user touch on it
-            newThumbnail.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(v: View?) {
-                    // Creating the layout
-                    var fullscreenPicture: RelativeLayout = RelativeLayout(v?.context)
-                    fullscreenPicture.background = BitmapDrawable(resources, photo)
-                    fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
-                    var closeButtonFullscreen: ImageButton = ImageButton(v?.context)
-                    closeButtonFullscreen.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
-                    closeButtonFullscreen.layoutParams = layoutParamsForCloseButton
-                    var userFullscreenDescription: EditText = EditText(v?.context)
-                    userFullscreenDescription.inputType = InputType.TYPE_CLASS_TEXT
-                    var layoutParams2 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                    layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                    userFullscreenDescription.layoutParams = layoutParams2
-                    fullscreenPicture.addView(userFullscreenDescription)
-                    fullscreenPicture.addView(closeButtonFullscreen)
-
-                    // Retrieving description, if there is one
-                    if (newThumbnail.childCount == 2) {
-                        var retrievedDescription: TextView = newThumbnail.getChildAt(1) as TextView
-                        userFullscreenDescription.setText(retrievedDescription.hint)
-                        newThumbnail.removeViewAt(1)
-                    }
-
-                    // Then adding it to a dialog window
-                    var dialogWindow: Dialog? = v?.context?.let { Dialog(it, android.R.style.Theme_NoTitleBar_Fullscreen) }
-                    dialogWindow?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                    dialogWindow?.setContentView(fullscreenPicture)
-                    dialogWindow?.show()
-
-
-                    closeButtonFullscreen.setOnClickListener(object : View.OnClickListener {
-                        override fun onClick(v: View?) {
-                            if (userFullscreenDescription.text.isNotEmpty()) {
-                                var layoutParams3 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                                layoutParams3.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                                layoutParams3.setMargins(16, 16, 16, 16)
-                                var description: TextView = TextView(v?.context)
-                                description.layoutParams = layoutParams3
-                                description.hint = userFullscreenDescription.text
-                                description.setHintTextColor(getColor(R.color.colorPrimary))
-                                newThumbnail.addView(description)
-                                photoList.set(photoList.indexOf(EstatePhoto(uriPhoto)), EstatePhoto(uriPhoto, description.hint.toString()))
-                            }
-                            dialogWindow?.dismiss()
+                // Then adding it to a dialog window
+                var dialogWindow: Dialog? = v?.context?.let { Dialog(it, android.R.style.Theme_NoTitleBar_Fullscreen) }
+                dialogWindow?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialogWindow?.setContentView(fullscreenPicture)
+                dialogWindow?.show()
+                closeButtonFullscreen.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View?) {
+                        if (userFullscreenDescription.text.isNotEmpty()) {
+                            var layoutParams3 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+                            layoutParams3.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                            layoutParams3.setMargins(16, 16, 16, 16)
+                            var description: TextView = TextView(v?.context)
+                            description.layoutParams = layoutParams3
+                            description.hint = userFullscreenDescription.text
+                            description.setHintTextColor(getColor(R.color.colorPrimary))
+                            newThumbnail.addView(description)
+                            photoList.set(photoList.indexOf(EstatePhoto(uriPhoto)), EstatePhoto(uriPhoto, description.hint.toString()))
                         }
-                    })
-                }
-            })
+                        dialogWindow?.dismiss()
+                    }
+                })
+            }
+        })
+    }
 
+    private fun turnPhotoTheRightWay(inputStream: InputStream?): Matrix {
+        val matrix: Matrix = Matrix()
+        if (inputStream != null) {
+            val exif: ExifInterface = ExifInterface(inputStream)
+            when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)) {
+                ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+                ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            }
+        }
+        return matrix
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun savePhotoToSdCard(context: Context, uriPhoto: Uri) {
+    private fun savePhotoToTelephone(context: Context, photoToSave: Bitmap, uriPhoto: Uri) {
 
         var values : ContentValues = ContentValues()
         values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-        values.put(MediaStore.MediaColumns.DATE_TAKEN, timestamp)
         values.put(MediaStore.MediaColumns.IS_PENDING, true)
 
         val uri : Uri? = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
@@ -396,13 +399,14 @@ class CreateEstateActivity : Activity()  {
         if (uri != null)
         {
             var outputStream = ByteArrayOutputStream()
-            photo.compress(Bitmap.CompressFormat.JPEG, 100,outputStream)
+            photoToSave.compress(Bitmap.CompressFormat.JPEG, 100,outputStream)
             var photoData : ByteArray = outputStream.toByteArray()
 
             var fileOutputStream = FileOutputStream(outputFile)
             fileOutputStream.write(photoData)
             fileOutputStream.flush()
             fileOutputStream.close()
+            Toast.makeText(this, "File saved to : ${outputFile.absolutePath}", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -416,6 +420,7 @@ class CreateEstateActivity : Activity()  {
 
     companion object {
         const val CAMERA_REQUEST = 1888
+        const val LOAD_IMG_REQUEST = 1889
         const val CAMERA_PERMISSION_CODE = 100
         const val WRITE_EXTERNAL_PERMISSION_CODE = 101
     }
