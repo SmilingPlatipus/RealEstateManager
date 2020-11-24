@@ -368,6 +368,7 @@ class CreateEstateActivity : Activity()  {
                 var layoutParamsForFullscreenDescription = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
                 layoutParamsForFullscreenDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
                 userFullscreenDescription.layoutParams = layoutParamsForFullscreenDescription
+                userFullscreenDescription.setTextColor(Color.WHITE)
                 // Adding childs to the new fullscreen layout
                 fullscreenPicture.addView(userFullscreenDescription)
                 fullscreenPicture.addView(closeButtonFullscreen)
