@@ -8,10 +8,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -184,6 +182,9 @@ class CreateEstateActivity : Activity()  {
                 Log.i(TAG, "onClick: editText_address_of_estate_city :" + editText_address_of_estate_city.text)
                 Log.i(TAG, "onClick: editText_description_of_estate :" + editText_description_of_estate.text)
 
+                photoList.forEach {
+                    Log.i(TAG, "onClick: photoList : ${it}")
+                }
             }
         })
         buttonReinit.setOnClickListener(object : View.OnClickListener {
@@ -327,8 +328,8 @@ class CreateEstateActivity : Activity()  {
         closeButtonThumbnail.layoutParams = layoutParamsForCloseButton
         closeButtonThumbnail.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
+                photoList.removeAt(photos.indexOfChild(newThumbnail))
                 photos.removeView(newThumbnail)
-                photoList.remove(EstatePhoto(uriPhoto))
                 //outputFile.delete()
 
                 photoList.forEach {
@@ -342,13 +343,12 @@ class CreateEstateActivity : Activity()  {
         photoList.forEach {
             Log.i(TAG, "onActivityResult: photoList : ${it}")
         }
-        // Show the picture fullscreen on user touch on it
+        // Show the picture fullscreen on user touch
         newThumbnail.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-
-                // Getting the right thumbnail to draw fullscreen, rotating it if needed
-                val indexOfThumbnail = photos.indexOfChild(v)
-                inputStream = v?.context?.contentResolver?.openInputStream(photoList[indexOfThumbnail].uri)
+                // Getting the right thumbnail to draw fullscreen
+                val indexOfThumbnailInPhotoList = photos.indexOfChild(v)
+                inputStream = v?.context?.contentResolver?.openInputStream(photoList[indexOfThumbnailInPhotoList].uri)
 
                 // Creating the layout
                 var fullscreenPicture: RelativeLayout = RelativeLayout(v?.context)
@@ -356,7 +356,7 @@ class CreateEstateActivity : Activity()  {
                 fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
                 // Creating the fullscreen close button
                 var closeButtonFullscreen: ImageButton = ImageButton(v?.context)
-                var layoutParamsForCloseButton2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(60, 60)
+                var layoutParamsForCloseButton2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(80, 80)
                 layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_END)
                 layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_TOP)
                 layoutParamsForCloseButton2.setMargins(16, 16, 16, 16)
@@ -401,7 +401,10 @@ class CreateEstateActivity : Activity()  {
                             // Adding to the corresponding thumbnail
                             newThumbnail.addView(description)
                             // Updating the photoList accordingly
-                            photoList.set(indexOfThumbnail, EstatePhoto(uriPhoto, description.text.toString()))
+                            photoList.set(
+                                    indexOfThumbnailInPhotoList,
+                                    EstatePhoto(photoList[indexOfThumbnailInPhotoList].uri,
+                                            description.text.toString()))
 
                             photoList.forEach {
                                 Log.i(TAG, "onActivityResult: photoList : ${it}")
