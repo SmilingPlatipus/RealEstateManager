@@ -1,15 +1,17 @@
 package com.openclassrooms.realestatemanager.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
+import android.content.res.Resources
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -186,17 +188,31 @@ class CreateEstateActivity : Activity()  {
         })
         buttonReinit.setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
-                editText_address_of_estate_number.text.clear()
-                editText_address_of_estate_street.text.clear()
-                editText_address_of_estate_postalCode.text.clear()
-                editText_address_of_estate_city.text.clear()
-                editText_description_of_estate.text.clear()
+                val alertDialog = AlertDialog.Builder(p0?.context)
+                alertDialog.setTitle(p0?.context?.getString(R.string.create_estate_alert_dialog_title))
+                alertDialog.setMessage(p0?.context?.getString(R.string.create_estate_alert_dialog_message))
+                alertDialog.setPositiveButton(p0?.context?.getString(R.string.create_estate_alert_dialog_yes),object : DialogInterface.OnClickListener{
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                        editText_address_of_estate_number.text.clear()
+                        editText_address_of_estate_street.text.clear()
+                        editText_address_of_estate_postalCode.text.clear()
+                        editText_address_of_estate_city.text.clear()
+                        editText_description_of_estate.text.clear()
 
-                checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
-                create_estate_checkBox_all.isChecked = false
-                checkAllCheckboxes(switch = false)
+                        checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
+                        create_estate_checkBox_all.isChecked = false
+                        checkAllCheckboxes(switch = false)
 
-                photos.removeAllViewsInLayout()
+                        photos.removeAllViewsInLayout()
+                        photoList.clear()
+                    }
+                })
+                alertDialog.setNegativeButton(p0?.context?.getString(R.string.create_estate_alert_dialog_no),object : DialogInterface.OnClickListener{
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+
+                    }
+                })
+                alertDialog.show()
             }
         })
         buttonPhotos_take.setOnClickListener(object : View.OnClickListener {
@@ -290,16 +306,13 @@ class CreateEstateActivity : Activity()  {
                 outputFile = createNewJpegFile()
             }
         }
-        val matrix = turnPhotoTheRightWay(inputStream)
+        var matrix = turnPhotoTheRightWay(inputStream)
         photo = Bitmap.createBitmap(photo, 0, 0, photo.width, photo.height, matrix, true)
         // Saving selected image into the external directory of the app
         uriPhoto = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", outputFile)
         savePhotoToTelephone(this, photo, uriPhoto)
         // Adding photo uri to the list to be saved
         photoList.add(EstatePhoto(uriPhoto))
-        photoList.forEach {
-            Log.i(TAG, "onActivityResult: photoList : ${it}")
-        }
 
         // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
         var newThumbnail : RelativeLayout = RelativeLayout(this)
@@ -316,37 +329,52 @@ class CreateEstateActivity : Activity()  {
             override fun onClick(v: View?) {
                 photos.removeView(newThumbnail)
                 photoList.remove(EstatePhoto(uriPhoto))
-                outputFile.delete()
+                //outputFile.delete()
+
+                photoList.forEach {
+                    Log.i(TAG, "onActivityResult: photoList : ${it}")
+                }
             }
         })
         newThumbnail.addView(closeButtonThumbnail)
         photos.addView(newThumbnail)
+
+        photoList.forEach {
+            Log.i(TAG, "onActivityResult: photoList : ${it}")
+        }
         // Show the picture fullscreen on user touch on it
         newThumbnail.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
 
-                // Getting the right thumbnail to draw fullscreen
+                // Getting the right thumbnail to draw fullscreen, rotating it if needed
                 val indexOfThumbnail = photos.indexOfChild(v)
-                var thumbnailToDrawFullscreen = v?.context?.contentResolver?.openInputStream(photoList[indexOfThumbnail].uri)
+                inputStream = v?.context?.contentResolver?.openInputStream(photoList[indexOfThumbnail].uri)
 
                 // Creating the layout
                 var fullscreenPicture: RelativeLayout = RelativeLayout(v?.context)
-                fullscreenPicture.background = BitmapDrawable(resources, thumbnailToDrawFullscreen)
+                fullscreenPicture.background = BitmapDrawable(resources, inputStream)
                 fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
+                // Creating the fullscreen close button
                 var closeButtonFullscreen: ImageButton = ImageButton(v?.context)
+                var layoutParamsForCloseButton2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(60, 60)
+                layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_END)
+                layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+                layoutParamsForCloseButton2.setMargins(16, 16, 16, 16)
                 closeButtonFullscreen.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
-                closeButtonFullscreen.layoutParams = layoutParamsForCloseButton
+                closeButtonFullscreen.layoutParams = layoutParamsForCloseButton2
+                // Creating the editText, for receiving user content
                 var userFullscreenDescription: EditText = EditText(v?.context)
                 userFullscreenDescription.inputType = InputType.TYPE_CLASS_TEXT
-                var layoutParams2 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                userFullscreenDescription.layoutParams = layoutParams2
+                var layoutParamsForFullscreenDescription = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+                layoutParamsForFullscreenDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                userFullscreenDescription.layoutParams = layoutParamsForFullscreenDescription
+                // Adding childs to the new fullscreen layout
                 fullscreenPicture.addView(userFullscreenDescription)
                 fullscreenPicture.addView(closeButtonFullscreen)
                 // Retrieving description, if there is one
-                if (newThumbnail.childCount == 2) {
+                if (newThumbnail.childCount >= 2) {
                     var retrievedDescription: TextView = newThumbnail.getChildAt(1) as TextView
-                    userFullscreenDescription.setText(retrievedDescription.hint)
+                    userFullscreenDescription.setText(retrievedDescription.text)
                     newThumbnail.removeViewAt(1)
                 }
                 // Then adding it to a dialog window
@@ -357,15 +385,27 @@ class CreateEstateActivity : Activity()  {
                 closeButtonFullscreen.setOnClickListener(object : View.OnClickListener {
                     override fun onClick(v: View?) {
                         if (userFullscreenDescription.text.isNotEmpty()) {
-                            var layoutParams3 = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                            layoutParams3.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                            layoutParams3.setMargins(16, 16, 16, 16)
+                            // Setting params for description
+                            var layoutParamsForThumbnailDescription =
+                                    RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+                            layoutParamsForThumbnailDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                            layoutParamsForThumbnailDescription.addRule(RelativeLayout.CENTER_HORIZONTAL)
+                            layoutParamsForThumbnailDescription.setMargins(16, 16, 16, 16)
                             var description: TextView = TextView(v?.context)
-                            description.layoutParams = layoutParams3
-                            description.hint = userFullscreenDescription.text
-                            description.setHintTextColor(getColor(R.color.colorPrimary))
+                            description.layoutParams = layoutParamsForThumbnailDescription
+                            description.text = userFullscreenDescription.text
+                            var shade = ResourcesCompat.getDrawable(resources,R.drawable.thumbnail_shade, null)
+                            shade?.alpha = 100
+                            description.background = shade
+                            description.setTextColor(Color.WHITE)
+                            // Adding to the corresponding thumbnail
                             newThumbnail.addView(description)
-                            photoList.set(photoList.indexOf(EstatePhoto(uriPhoto)), EstatePhoto(uriPhoto, description.hint.toString()))
+                            // Updating the photoList accordingly
+                            photoList.set(indexOfThumbnail, EstatePhoto(uriPhoto, description.text.toString()))
+
+                            photoList.forEach {
+                                Log.i(TAG, "onActivityResult: photoList : ${it}")
+                            }
                         }
                         dialogWindow?.dismiss()
                     }
