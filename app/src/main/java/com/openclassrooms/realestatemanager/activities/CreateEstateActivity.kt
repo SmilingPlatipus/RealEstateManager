@@ -29,11 +29,13 @@ import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.slider.Slider
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.model.EstatePhoto
 import kotlinx.android.synthetic.main.activity_create_estate.*
 import java.io.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -164,11 +166,24 @@ class CreateEstateActivity : Activity()  {
                 else if (checkboxesStatus.contains(NearbyServices.SCHOOL))
                     checkboxesStatus.remove(NearbyServices.SCHOOL)
 
+                // Adress content is needed, so if something is missing, return
                 when {
-                    editText_address_of_estate_number.text.isEmpty() -> Toast.makeText(p0?.context, getString(R.string.create_estate_number_not_selected), Toast.LENGTH_SHORT).show()
-                    editText_address_of_estate_street.text.isEmpty() -> Toast.makeText(p0?.context, getString(R.string.create_estate_street_not_selected), Toast.LENGTH_SHORT).show()
-                    editText_address_of_estate_postalCode.text.isEmpty() -> Toast.makeText(p0?.context, getString(R.string.create_estate_postalCode_not_selected), Toast.LENGTH_SHORT).show()
-                    editText_address_of_estate_city.text.isEmpty() -> Toast.makeText(p0?.context, getString(R.string.create_estate_city_not_selected), Toast.LENGTH_SHORT).show()
+                    editText_address_of_estate_number.text.isEmpty() -> {
+                        Toast.makeText(p0?.context, getString(R.string.create_estate_number_not_selected), Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    editText_address_of_estate_street.text.isEmpty() -> {
+                        Toast.makeText(p0?.context, getString(R.string.create_estate_street_not_selected), Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    editText_address_of_estate_postalCode.text.isEmpty() -> {
+                        Toast.makeText(p0?.context, getString(R.string.create_estate_postalCode_not_selected), Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    editText_address_of_estate_city.text.isEmpty() -> {
+                        Toast.makeText(p0?.context, getString(R.string.create_estate_city_not_selected), Toast.LENGTH_SHORT).show()
+                        return
+                    }
                 }
 
                 Log.i(TAG, "onClick: checkboxesStatus :" + checkboxesStatus.toString())
@@ -185,8 +200,33 @@ class CreateEstateActivity : Activity()  {
                 photoList.forEach {
                     Log.i(TAG, "onClick: photoList : ${it}")
                 }
+                var poiList : MutableList<String> = emptyList<String>().toMutableList()
+                checkboxesStatus.forEach {
+                    poiList.add(it.name)
+                }
+                var newEstate = Estate(
+                        spinner_selection,
+                        slider_price_value,
+                        slider_size_value,
+                        slider_rooms_value?.roundToInt(),
+                        editText_description_of_estate.text.toString(),
+                        photoList,
+                        listOf(
+                                editText_address_of_estate_number.text.toString(),
+                                editText_address_of_estate_street.text.toString(),
+                                editText_address_of_estate_postalCode.text.toString(),
+                                editText_address_of_estate_city.text.toString()),
+                        poiList,
+                        "for sale",
+                        OffsetDateTime.now(),
+                        null,
+                        "Jean Michel",
+                        null,
+                        null)
+
             }
         })
+
         buttonReinit.setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 val alertDialog = AlertDialog.Builder(p0?.context)
@@ -216,6 +256,7 @@ class CreateEstateActivity : Activity()  {
                 alertDialog.show()
             }
         })
+
         buttonPhotos_take.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 when {
@@ -313,7 +354,7 @@ class CreateEstateActivity : Activity()  {
         uriPhoto = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", outputFile)
         savePhotoToTelephone(this, photo, uriPhoto)
         // Adding photo uri to the list to be saved
-        photoList.add(EstatePhoto(uriPhoto))
+        photoList.add(EstatePhoto(uriPhoto.toString()))
 
         // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
         var newThumbnail : RelativeLayout = RelativeLayout(this)
@@ -348,7 +389,7 @@ class CreateEstateActivity : Activity()  {
             override fun onClick(v: View?) {
                 // Getting the right thumbnail to draw fullscreen
                 val indexOfThumbnailInPhotoList = photos.indexOfChild(v)
-                inputStream = v?.context?.contentResolver?.openInputStream(photoList[indexOfThumbnailInPhotoList].uri)
+                inputStream = v?.context?.contentResolver?.openInputStream(Uri.parse(photoList[indexOfThumbnailInPhotoList].uri))
 
                 // Creating the layout
                 var fullscreenPicture: RelativeLayout = RelativeLayout(v?.context)

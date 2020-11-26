@@ -65,6 +65,7 @@
         app:constraintSetStart="@+id/start"
         app:constraintSetEnd="@+id/end"
         app:duration="2500"
+        motion:layoutDuringTransition="honorRequest"
         app:autoTransition="animateToEnd">
         <KeyFrameSet >
             <KeyAttribute
@@ -132,6 +133,7 @@
         android:id="@+id/loan_click_transition"
         app:constraintSetStart="@+id/end"
         app:constraintSetEnd="@+id/loan_click_end"
+        motion:layoutDuringTransition="honorRequest"
         app:duration="2500">
         <OnClick app:targetId="@+id/loan_button" />
         <KeyFrameSet >
@@ -188,6 +190,7 @@
         android:id="@+id/search_click_transition"
         app:constraintSetStart="@+id/end"
         app:constraintSetEnd="@+id/search_click_end"
+        motion:layoutDuringTransition="honorRequest"
         app:duration="2500">
         <OnClick app:targetId="@+id/search_button" />
         <KeyFrameSet >
@@ -244,6 +247,7 @@
         android:id="@+id/map_click_transition"
         app:constraintSetStart="@+id/end"
         app:constraintSetEnd="@+id/map_click_end"
+        motion:layoutDuringTransition="honorRequest"
         app:duration="2500">
         <OnClick app:targetId="@+id/map_button" />
         <KeyFrameSet >
@@ -299,6 +303,7 @@
     <Transition
         android:id="@+id/create_estate_click_transition"
         app:constraintSetStart="@+id/end"
+        motion:layoutDuringTransition="honorRequest"
         app:constraintSetEnd="@+id/create_estate_click_end"
         app:duration="2500">
         <OnClick app:targetId="@+id/house_button" />

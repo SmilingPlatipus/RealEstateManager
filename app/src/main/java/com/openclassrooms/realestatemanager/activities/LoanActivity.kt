@@ -6,8 +6,10 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.slider.LabelFormatter
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
 import kotlinx.android.synthetic.main.activity_loan_simulation.*
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -26,6 +28,11 @@ class LoanActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loan_simulation)
+        val fragment = RecyclerViewFragment.newInstance()
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.estatesView,fragment)
+        fragmentTransaction.commit()
 
         slider_loan.setLabelFormatter{value: Float ->
             val format = NumberFormat.getCurrencyInstance()
@@ -46,12 +53,9 @@ class LoanActivity : AppCompatActivity() {
 
         slider_loan.addOnChangeListener { slider, value, fromUser ->
             slider_loan_value = value
-            monthly_payment_amount.setText(calculateMonthlyPayment(amount = value.toLong(),period = slider_period_value.toInt(), interest_rate_value).toString())
-
         }
         slider_period.addOnChangeListener { slider, value, fromUser ->
             slider_period_value = value
-            monthly_payment_amount.setText(calculateMonthlyPayment(amount = slider_loan_value.toLong(),period = value.toInt(), interest_rate_value).toString())
         }
         interest_rate_editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -64,7 +68,6 @@ class LoanActivity : AppCompatActivity() {
                 if (!p0.isNullOrEmpty()) {
                     Log.d(TAG, "onTextChanged: ${temp}")
                     interest_rate_value = temp.toFloat()
-                    monthly_payment_amount.setText(calculateMonthlyPayment(amount = slider_loan_value.toLong(), period = slider_period_value.toInt(), interest_rate_value).toString() + getString(R.string.currency_per_month))
                 }
             }
 
@@ -100,13 +103,15 @@ class LoanActivity : AppCompatActivity() {
             period : Int,
             interestRate : Float) : Double
     {
-        val df = DecimalFormat("#.##")
+        val df = DecimalFormat()
+        df.maximumFractionDigits = 2
         df.roundingMode = RoundingMode.HALF_UP
         var power = (-12*period).toDouble()
         var denominator = 1 - (Math.pow(1 + (interestRate/100/12).toDouble(),power))
         var numerator = (amount * (interestRate/100/12))
         Log.d(TAG, "calculateMonthlyPayment: amount : ${amount} period : ${period} interestRate : ${interestRate} \n")
         Log.d(TAG, "calculateMonthlyPayment: formula : ${numerator} / ${denominator}")
+
         return df.format(numerator / denominator).toDouble()
     }
 

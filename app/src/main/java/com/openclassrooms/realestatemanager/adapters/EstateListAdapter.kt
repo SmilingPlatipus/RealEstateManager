@@ -1,14 +1,15 @@
 package com.openclassrooms.realestatemanager.adapters
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 
@@ -29,12 +30,15 @@ class EstateListAdapter (context : Context, list : MutableList<Estate>) : Recycl
     }
 
     override fun onBindViewHolder(holder: EstateListAdapter.EstateViewHolder, position: Int) {
+        var estatePhotoList = estateList[position].photosUriWithDescriptions
+        // In the RecyclerView, just showing the first photo in the thumbnail
+        var uriPhoto = Uri.parse(estatePhotoList?.get(0)?.uri)
         Glide.with(holder.image.context)
-                .load(estateList[position].photoUri)
+                .load(uriPhoto)
                 .into(holder.image)
 
         holder.typeOfEstate.setText(estateList[position].type)
-        holder.cityOfEstate.setText(estateList[position].address.last())
+        holder.cityOfEstate.setText(estateList[position].address?.last())
         holder.priceOfEstate.setText(estateList[position].price.toString())
     }
 
