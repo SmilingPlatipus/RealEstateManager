@@ -1,10 +1,10 @@
-:house:  #RealEstateManager
+#RealEstateManager
 
-:pushpin: ##Overview
+##Overview
 
 This is an app who offers a complete solution for handling real estate management.
 
-:pushpin: ##Features already implemented
+##Features already implemented
 
 - [X] dynamic menu with animations
 - [X] SQLite database, to ensure that the app can still works in offline mode
@@ -12,7 +12,7 @@ This is an app who offers a complete solution for handling real estate managemen
 - [ ] loan simulator
 - [ ] real estate search into the database, not finished
 
-:pushpin: ##ToDo List
+##ToDo List
 
 - [ ] loan simulator ==> bug with amount per month calculation
 - [ ] real estate search ==> need to implement raw query
