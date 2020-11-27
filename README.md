@@ -1,6 +1,6 @@
-:house: # RealEstateManager
+:house:  #RealEstateManager
 
-##Overview
+:pushpin: ##Overview
 
 This is an app who offers a complete solution for handling real estate management.
 
