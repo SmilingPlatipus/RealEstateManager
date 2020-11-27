@@ -21,6 +21,10 @@ Project is created with:
 	
 ## Screens
 
+![image](https://github.com/SmilingPlatipus/RealEstateManager/blob/photo_features/Screenshot_1606388166.png?raw=true "Create a real estate")
+![image](https://github.com/SmilingPlatipus/RealEstateManager/blob/photo_features/Screenshot_1606388173.png?raw=true "Create a real estate form")
+![image](https://github.com/SmilingPlatipus/RealEstateManager/blob/photo_features/Screenshot_1606501653.png?raw=true "Main menu")
+
 ## Functionnalities already implemented
 
 - [X] :thumbsup:Main menu with animated buttons
