@@ -22,6 +22,7 @@ import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -31,7 +32,9 @@ import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.model.EstatePhoto
+import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_create_estate.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -39,7 +42,7 @@ import java.time.OffsetDateTime
 import java.util.*
 import kotlin.math.roundToInt
 
-class CreateEstateActivity : Activity()  {
+class CreateEstateActivity : AppCompatActivity()  {
     val TAG: String = "CreateEstateActivity"
 
     var spinner_selection : String? = null
@@ -47,6 +50,7 @@ class CreateEstateActivity : Activity()  {
     var slider_rooms_value : Float? = null
     var slider_size_value : Float? = null
     var checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
+    val estateViewModel by viewModel<EstateViewModel>()
 
     lateinit var photo: Bitmap
     var photoList: MutableList<EstatePhoto> = emptyList<EstatePhoto>().toMutableList()
@@ -107,34 +111,34 @@ class CreateEstateActivity : Activity()  {
 
         create_estate_Slider_price.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {
-                slider_price_value = slider.value
-                Log.i(TAG, "onStartTrackingTouch: SliderPrice =$slider_price_value")
+
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
-
+                slider_price_value = slider.value
+                Log.i(TAG, "onStopTrackingTouch: SliderPrice =$slider_price_value")
             }
         })
 
         create_estate_Slider_size.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {
-                slider_size_value = slider.value
-                Log.i(TAG, "onStartTrackingTouch: SliderSize =$slider_size_value")
+
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
-
+                slider_size_value = slider.value
+                Log.i(TAG, "onStopTrackingTouch: SliderSize =$slider_size_value")
             }
         })
 
         create_estate_Slider_rooms.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {
-                slider_rooms_value = slider.value
-                Log.i(TAG, "onStartTrackingTouch: SliderRooms =$slider_rooms_value")
+
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
-
+                slider_rooms_value = slider.value
+                Log.i(TAG, "onStopTrackingTouch: SliderRooms =$slider_rooms_value")
             }
         })
 
@@ -184,6 +188,10 @@ class CreateEstateActivity : Activity()  {
                         Toast.makeText(p0?.context, getString(R.string.create_estate_city_not_selected), Toast.LENGTH_SHORT).show()
                         return
                     }
+                    photoList.isEmpty() -> {
+                        Toast.makeText(p0?.context, getString(R.string.create_estate_photo_not_selected), Toast.LENGTH_SHORT).show()
+                        return
+                    }
                 }
 
                 Log.i(TAG, "onClick: checkboxesStatus :" + checkboxesStatus.toString())
@@ -224,6 +232,9 @@ class CreateEstateActivity : Activity()  {
                         null,
                         null)
 
+                estateViewModel.insert(newEstate)
+                Toast.makeText(p0?.context,"Real estate created succesfully",Toast.LENGTH_LONG).show()
+                finish()
             }
         })
 
@@ -326,6 +337,7 @@ class CreateEstateActivity : Activity()  {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK)
         {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()

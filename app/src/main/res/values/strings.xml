@@ -66,5 +66,6 @@
     <string name="create_estate_alert_dialog_no">no</string>
     <string name="buttonReset">Reset</string>
     <string name="buttonSimulate">Calculate</string>
+    <string name="create_estate_photo_not_selected">You need to select at least a photo to create a new real estate</string>
 
 </resources>

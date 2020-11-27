@@ -5,16 +5,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Observer
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
 import com.openclassrooms.realestatemanager.modules.mainModule
-import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.context.startKoin
 
 class MainActivity : AppCompatActivity() {

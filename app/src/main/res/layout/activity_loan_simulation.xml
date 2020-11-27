@@ -54,7 +54,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.slider.Slider
-                android:id="@+id/slider_loan"
+                android:id="@+id/slider_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="16dp"
@@ -74,7 +74,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/slider_loan" />
+                app:layout_constraintTop_toBottomOf="@id/slider_amount" />
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/slider_period"
@@ -135,8 +135,9 @@
             <LinearLayout
                 android:id="@+id/layout_Buttons"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
                 android:weightSum="2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

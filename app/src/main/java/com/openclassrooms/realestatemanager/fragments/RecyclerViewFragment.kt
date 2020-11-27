@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.adapters.EstateListAdapter
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RecyclerViewFragment : Fragment() {
     lateinit var recyclerview : RecyclerView

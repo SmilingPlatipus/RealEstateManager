@@ -16,7 +16,7 @@ import com.openclassrooms.realestatemanager.activities.CreateEstateActivity.Near
 import com.openclassrooms.realestatemanager.model.EstatePhoto
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import java.time.OffsetDateTime
 import java.time.ZoneOffset

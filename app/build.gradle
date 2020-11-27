@@ -72,17 +72,9 @@ dependencies {
     // Koin extended & experimental features
     implementation "org.koin:koin-core-ext:$koin_version"
 
-    // Koin for Unit tests
-    testImplementation "org.koin:koin-test:$koin_version"
-
-    // Koin for Android
-    implementation "org.koin:koin-android:$koin_version"
-
-    // Koin Android Scope features
-    implementation "org.koin:koin-android-scope:$koin_version"
 
     // Koin Android ViewModel features
-    implementation "org.koin:koin-android-viewmodel:$koin_version"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
