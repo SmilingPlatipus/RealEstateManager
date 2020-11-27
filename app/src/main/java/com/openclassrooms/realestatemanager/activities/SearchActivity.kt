@@ -8,8 +8,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionLayout.TransitionListener
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.slider.RangeSlider
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
 import kotlinx.android.synthetic.main.activity_search.*
 import java.text.NumberFormat
 import java.util.*
@@ -46,6 +48,11 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        val fragment = RecyclerViewFragment.newInstance()
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.estatesView,fragment)
+        fragmentTransaction.commit()
 
         rangeSlider_price.setLabelFormatter {value: Float ->
             val format = NumberFormat.getCurrencyInstance()

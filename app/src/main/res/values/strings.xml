@@ -60,5 +60,11 @@
     <string name="create_estate_photoText">Photos :</string>
     <string name="create_estate_button_take_photo">Take a photo</string>
     <string name="create_estate_button_gallery">See gallery</string>
+    <string name="create_estate_alert_dialog_title">Confirmation</string>
+    <string name="create_estate_alert_dialog_message">Do you really want to reset all page ?</string>
+    <string name="create_estate_alert_dialog_yes">yes</string>
+    <string name="create_estate_alert_dialog_no">no</string>
+    <string name="buttonReset">Reset</string>
+    <string name="buttonSimulate">Calculate</string>
 
 </resources>

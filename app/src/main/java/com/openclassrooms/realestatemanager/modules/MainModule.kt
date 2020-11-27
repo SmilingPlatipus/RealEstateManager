@@ -12,7 +12,8 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.dao.EstateDao
 import com.openclassrooms.realestatemanager.db.EstateDatabase
 import com.openclassrooms.realestatemanager.repositories.EstateDataRepository
-import com.openclassrooms.realestatemanager.utils.OffsetDateTimeConverter
+import com.openclassrooms.realestatemanager.activities.CreateEstateActivity.NearbyServices
+import com.openclassrooms.realestatemanager.model.EstatePhoto
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -20,11 +21,13 @@ import org.koin.dsl.module
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 @JvmField
 val mainModule = module {
     viewModel { EstateViewModel(get())}
+
 
     fun provideDb(context: Context): EstateDatabase {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmX")
@@ -35,17 +38,27 @@ val mainModule = module {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
 
-                        var poi = listOf("school","hospital")
                         var address = listOf("143","Rue de la chartreuse","46000","Cahors")
                         var contentValues = ContentValues()
+                        var checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
+                        var poiList : MutableList<String> = emptyList<String>().toMutableList()
+                        var photoList: MutableList<EstatePhoto> = emptyList<EstatePhoto>().toMutableList()
+
+                        checkboxesStatus.add(NearbyServices.HOSPITAL)
+                        checkboxesStatus.add(NearbyServices.PARK)
+                        checkboxesStatus.forEach {
+                            poiList.add(it.name)
+                        }
+                        var somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison1,"Juste un appart")
+                        photoList.add(somePhoto)
 
                         contentValues.put("type","appartment")
                         contentValues.put("price",150000.0)
                         contentValues.put("size",120f)
                         contentValues.put("rooms",3)
                         contentValues.put("description","Nice apartment on Cahors")
-                        contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison1)
+                        contentValues.put("poi", Gson().toJson(poiList))
+                        contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
                         contentValues.put("status","for sale")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
@@ -55,17 +68,19 @@ val mainModule = module {
                         contentValues.put("longitude", 1.437470)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+                        photoList.clear()
 
-                        poi = listOf("park","shops")
                         address = listOf("160","Rue des Cadourques","46000","Cahors")
+                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison2,"Juste un appart")
+                        photoList.add(somePhoto)
 
                         contentValues.put("type","house")
                         contentValues.put("price",300000.0)
                         contentValues.put("size",200f)
                         contentValues.put("rooms",5)
                         contentValues.put("description","Big house in the center of Cahors")
-                        contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison2)
+                        contentValues.put("poi", Gson().toJson(poiList))
+                        contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
                         contentValues.put("status","for sale")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
@@ -75,17 +90,19 @@ val mainModule = module {
                         contentValues.put("longitude", 1.436512)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+                        photoList.clear()
 
-                        poi = listOf("park","shops","hospital","shool")
                         address = listOf("292","Rue Joachim Murat","46000","Cahors")
+                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison3,"Juste un appart")
+                        photoList.add(somePhoto)
 
                         contentValues.put("type","penthouse")
                         contentValues.put("price",1000000.0)
                         contentValues.put("size",250f)
                         contentValues.put("rooms",8)
                         contentValues.put("description","Penthouse in the center of Cahors")
-                        contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison3)
+                        contentValues.put("poi", Gson().toJson(poiList))
+                        contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
                         contentValues.put("status","sold")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
@@ -95,17 +112,19 @@ val mainModule = module {
                         contentValues.put("longitude", 1.435320)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+                        photoList.clear()
 
-                        poi = listOf("park")
                         address = listOf("50","Avenue Edouard Herriot","46000","Cahors")
+                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison4,"Juste un appart")
+                        photoList.add(somePhoto)
 
                         contentValues.put("type","house")
                         contentValues.put("price",100000.0)
                         contentValues.put("size",80f)
                         contentValues.put("rooms",3)
                         contentValues.put("description","House in the suburbs of Cahors")
-                        contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison4)
+                        contentValues.put("poi", Gson().toJson(poiList))
+                        contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
                         contentValues.put("status","for sale")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
@@ -115,17 +134,19 @@ val mainModule = module {
                         contentValues.put("longitude", 1.452225)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+                        photoList.clear()
 
-                        poi = listOf("park","shops")
                         address = listOf("13","Hameau du Pouget","46090","Pradines")
+                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison5,"Juste un appart")
+                        photoList.add(somePhoto)
 
                         contentValues.put("type","house")
                         contentValues.put("price",200000.0)
                         contentValues.put("size",130f)
                         contentValues.put("rooms",5)
                         contentValues.put("description","Nice house in the suburbs of Cahors")
-                        contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison5)
+                        contentValues.put("poi", Gson().toJson(poiList))
+                        contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
                         contentValues.put("status","for sale")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
@@ -135,17 +156,19 @@ val mainModule = module {
                         contentValues.put("longitude", 1.408581)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+                        photoList.clear()
 
-                        poi = listOf("park","shops","hospital","shool")
                         address = listOf("108","Rue des Augustins","46000","Cahors")
+                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison6,"Juste un appart")
+                        photoList.add(somePhoto)
 
                         contentValues.put("type","appartment")
                         contentValues.put("price",100000.0)
                         contentValues.put("size",70f)
                         contentValues.put("rooms",3)
                         contentValues.put("description","Appartment in Cahors")
-                        contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison6)
+                        contentValues.put("poi", Gson().toJson(poiList))
+                        contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
                         contentValues.put("status","for sale")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
@@ -155,17 +178,19 @@ val mainModule = module {
                         contentValues.put("longitude", 1.438579)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+                        photoList.clear()
 
-                        poi = listOf("hospital","shool")
                         address = listOf("382","Rue Président Wilson","46000","Cahors")
+                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison7,"Juste un appart")
+                        photoList.add(somePhoto)
 
                         contentValues.put("type","house")
                         contentValues.put("price",250000.0)
                         contentValues.put("size",130f)
                         contentValues.put("rooms",5)
                         contentValues.put("description","House in the center of Cahors")
-                        contentValues.put("poi", Gson().toJson(poi))
-                        contentValues.put("photoUri", "android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison7)
+                        contentValues.put("poi", Gson().toJson(poiList))
+                        contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
                         contentValues.put("status","for sale")
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
@@ -175,6 +200,8 @@ val mainModule = module {
                         contentValues.put("longitude", 1.436329)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+
+
                     }
 
                 })
