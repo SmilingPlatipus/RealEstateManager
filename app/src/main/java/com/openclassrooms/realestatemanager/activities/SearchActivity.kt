@@ -195,6 +195,38 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         })
+
+        buttonReinitialize.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                rangeSlider_price_minValue = resources.getStringArray(R.array.initValues_rangeSlider_price)[0].toFloat()
+                rangeSlider_price_maxValue = resources.getStringArray(R.array.initValues_rangeSlider_price)[1].toFloat()
+                rangeSlider_price.values = mutableListOf(
+                        resources.getStringArray(R.array.initValues_rangeSlider_price)[0].toFloat(),
+                        resources.getStringArray(R.array.initValues_rangeSlider_price)[1].toFloat())
+
+                rangeSlider_rooms_minValue = resources.getStringArray(R.array.initValues_rangeSlider_rooms)[0].toFloat()
+                rangeSlider_rooms_maxValue = resources.getStringArray(R.array.initValues_rangeSlider_rooms)[1].toFloat()
+                rangeSlider_rooms.values = mutableListOf(
+                        resources.getStringArray(R.array.initValues_rangeSlider_rooms)[0].toFloat(),
+                        resources.getStringArray(R.array.initValues_rangeSlider_rooms)[1].toFloat())
+
+                rangeSlider_size_minValue = resources.getStringArray(R.array.initValues_rangeSlider_size)[0].toFloat()
+                rangeSlider_size_maxValue = resources.getStringArray(R.array.initValues_rangeSlider_size)[1].toFloat()
+                rangeSlider_size.values = mutableListOf(
+                        resources.getStringArray(R.array.initValues_rangeSlider_size)[0].toFloat(),
+                        resources.getStringArray(R.array.initValues_rangeSlider_size)[1].toFloat())
+
+                radioGroup_search_status.clearCheck()
+                radioButton_searchStatus = null
+
+                radioGroup_search_typeOfEstate.clearCheck()
+                radioButton_estateType = null
+
+                checkboxesStatus.removeAll(NearbyServices.values())
+                checkAllCheckboxes(false)
+                checkBox_all.isChecked = false
+            }
+        })
     }
 
     override fun onBackPressed() {
