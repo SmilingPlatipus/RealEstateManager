@@ -49,6 +49,9 @@
         <activity android:name="com.openclassrooms.realestatemanager.activities.CreateEstateActivity"
             android:parentActivityName=".activities.MainActivity">
         </activity>
+        <activity android:name="com.openclassrooms.realestatemanager.activities.DetailEstateActivity"
+            android:parentActivityName=".activities.MainActivity">
+        </activity>
     </application>
 
 </manifest>

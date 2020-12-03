@@ -15,7 +15,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class RecyclerViewFragment : Fragment() {
     lateinit var recyclerview : RecyclerView
     lateinit var adapter: EstateListAdapter
-    val estateViewModel by viewModel<EstateViewModel>()
+    private val estateViewModel by viewModel<EstateViewModel>()
 
     companion object {
         fun newInstance() : RecyclerViewFragment{
@@ -25,16 +25,15 @@ class RecyclerViewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.estate_recyclerview,container,false)
+        adapter = EstateListAdapter(view.context)
 
         estateViewModel.allEstates.observe(requireActivity()) {
-            adapter = EstateListAdapter(view.context,it)
             recyclerview = view.findViewById(R.id.estate_list)
             val layoutManager = LinearLayoutManager(view.context,LinearLayoutManager.HORIZONTAL,false)
+            adapter.setEstateList(it)
             recyclerview.adapter = adapter
             recyclerview.layoutManager = layoutManager
             recyclerview.scrollBy(0,0)}
-
-
         return view
     }
 }

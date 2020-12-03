@@ -90,6 +90,8 @@ class LoanActivity : AppCompatActivity() {
             override fun onClick(v: View?) {
                 slider_amount.value = 0F
                 slider_period.value = 3F
+                monthly_payment_amount.clearComposingText()
+                interest_rate_value = null
                 interest_rate_editText.text = null
             }
         })

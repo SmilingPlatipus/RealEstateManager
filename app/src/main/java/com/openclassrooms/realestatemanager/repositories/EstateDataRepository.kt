@@ -8,6 +8,10 @@ class EstateDataRepository (private val estateDao: EstateDao){
 
     val allEstates: LiveData<MutableList<Estate>> = estateDao.getAll()
 
+    fun getEstateById(estateId: Long): Estate{
+        return estateDao.getEstateById(estateId)
+    }
+
     suspend fun insert(estate: Estate): Long{
         return estateDao.insert(estate)
     }

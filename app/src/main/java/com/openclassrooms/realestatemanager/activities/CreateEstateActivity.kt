@@ -448,7 +448,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                             var description: TextView = TextView(v?.context)
                             description.layoutParams = layoutParamsForThumbnailDescription
                             description.text = userFullscreenDescription.text
-                            var shade = ResourcesCompat.getDrawable(resources,R.drawable.thumbnail_shade, null)
+                            var shade = ResourcesCompat.getDrawable(resources,R.drawable.thumbnail_shade50, null)
                             shade?.alpha = 100
                             description.background = shade
                             description.setTextColor(Color.WHITE)

@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/Android/plugins/android/lib/android.jar!/images/material/icons/materialicons/close/baseline_close_24.xml" />
+                                      <entry key="url" value="jar:file:/D:/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/contact_support/baseline_contact_support_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,7 +33,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_baseline_close_24" />
+                            <entry key="outputName" value="ic_baseline_contact_support_24" />
                             <entry key="sourceFile" value="D:\AndroidStudioProjects\RealEstateManager" />
                           </map>
                         </option>
