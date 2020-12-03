@@ -60,6 +60,8 @@ class SearchActivity : AppCompatActivity() {
             format.currency = Currency.getInstance("USD")
             format.format(value.toDouble())
         }
+        rangeSlider_price_minValue = resources.getStringArray(R.array.initValues_rangeSlider_price)[0].toFloat()
+        rangeSlider_price_maxValue = resources.getStringArray(R.array.initValues_rangeSlider_price)[1].toFloat()
 
         rangeSlider_rooms.setLabelFormatter { value ->
             val temp = StringBuilder()
@@ -68,6 +70,8 @@ class SearchActivity : AppCompatActivity() {
             temp.append(getString(R.string.rooms))
             temp.toString()
         }
+        rangeSlider_rooms_minValue = resources.getStringArray(R.array.initValues_rangeSlider_rooms)[0].toFloat()
+        rangeSlider_rooms_maxValue = resources.getStringArray(R.array.initValues_rangeSlider_rooms)[1].toFloat()
 
         rangeSlider_size.setLabelFormatter { value ->
             val temp = StringBuilder()
@@ -76,6 +80,8 @@ class SearchActivity : AppCompatActivity() {
             temp.append(getString(R.string.size))
             temp.toString()
         }
+        rangeSlider_size_minValue = resources.getStringArray(R.array.initValues_rangeSlider_size)[0].toFloat()
+        rangeSlider_size_maxValue = resources.getStringArray(R.array.initValues_rangeSlider_size)[1].toFloat()
 
         rangeSlider_price.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener{
             override fun onStopTrackingTouch(slider: RangeSlider) {
@@ -145,15 +151,25 @@ class SearchActivity : AppCompatActivity() {
                 else if (checkboxesStatus.contains(NearbyServices.SCHOOL))
                     checkboxesStatus.remove(NearbyServices.SCHOOL)
 
-                Log.i(TAG, "onClick: checkboxes_status : " + checkboxesStatus.toString())
-                Log.i(TAG, "onClick: radioButton_searchStatus : " + radioButton_searchStatus)
-                Log.i(TAG, "onClick: radioButton_estateType : " + radioButton_estateType)
+                Log.i(TAG, "onClick: checkboxes_status : $checkboxesStatus")
+                Log.i(TAG, "onClick: radioButton_searchStatus : $radioButton_searchStatus")
+                Log.i(TAG, "onClick: radioButton_estateType : $radioButton_estateType")
+                Log.i(TAG, "onClick: rangeSlider_price_minValue : $rangeSlider_price_minValue")
+                Log.i(TAG, "onClick: rangeSlider_price_maxValue : $rangeSlider_price_maxValue")
+                Log.i(TAG, "onClick: rangeSlider_size_minValue : $rangeSlider_size_minValue")
+                Log.i(TAG, "onClick: rangeSlider_size_maxValue : $rangeSlider_size_maxValue")
+                Log.i(TAG, "onClick: rangeSlider_rooms_minValue : $rangeSlider_rooms_minValue")
+                Log.i(TAG, "onClick: rangeSlider_rooms_maxValue : $rangeSlider_rooms_maxValue")
 
-                if (radioButton_searchStatus == null)
+                if (radioButton_searchStatus == null) {
                     Toast.makeText(p0?.context, getString(R.string.search_status_not_selected), Toast.LENGTH_SHORT).show()
+                    return
+                }
 
-                if (radioButton_estateType == null)
+                if (radioButton_estateType == null) {
                     Toast.makeText(p0?.context, getString(R.string.estate_type_not_selected), Toast.LENGTH_SHORT).show()
+                    return
+                }
             }
         })
 

@@ -69,7 +69,7 @@ class DetailEstateActivity : AppCompatActivity() {
                         backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableShade))
                         backgroundWithShade.setLayerGravity(1,Gravity.BOTTOM)
                         newThumbnail.background = backgroundWithShade
-                        newThumbnail.setTextColor(Color.BLUE)
+                        newThumbnail.setTextColor(Color.YELLOW)
                     }
                 })
 
