@@ -18,16 +18,4 @@ class EstateViewModel(estateDataRepository: EstateDataRepository) : ViewModel() 
     fun insert(estate: Estate) = viewModelScope.launch (Dispatchers.IO){
         repository.insert(estate)
     }
-
-    fun update(estate: Estate) = viewModelScope.launch (Dispatchers.IO){
-        repository.update(estate)
-    }
-
-    fun deleteAll() = viewModelScope.launch (Dispatchers.IO){
-        repository.deleteAll()
-    }
-
-    fun getEstateById(id: Long): Estate {
-        return repository.getEstateById(id) as Estate
-    }
 }

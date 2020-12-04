@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.repositories
 
 import androidx.lifecycle.LiveData
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.openclassrooms.realestatemanager.dao.EstateDao
 import com.openclassrooms.realestatemanager.model.Estate
 
@@ -20,7 +21,7 @@ class EstateDataRepository (private val estateDao: EstateDao){
         estateDao.update(estate)
     }
 
-    suspend fun deleteAll() {
-        estateDao.deleteAll()
+    fun searchForEstate(query: SupportSQLiteQuery): MutableList<Estate> {
+        return estateDao.searchForEstate(query)
     }
 }

@@ -1,7 +1,5 @@
 package com.openclassrooms.realestatemanager.activities
 
-import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -9,7 +7,6 @@ import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -21,13 +18,14 @@ import com.bumptech.glide.request.transition.Transition
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.activities.MainActivity.Companion.ID_OF_SELECTED_ESTATE
 import com.openclassrooms.realestatemanager.model.Estate
+import com.openclassrooms.realestatemanager.viewModels.DetailViewModel
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class DetailEstateActivity : AppCompatActivity() {
-    private val estateViewModel by viewModel<EstateViewModel>()
+    private val detailViewModel by viewModel<DetailViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +42,7 @@ class DetailEstateActivity : AppCompatActivity() {
         drawableShade.setSize(150,150)
         lateinit var backgroundWithShade : LayerDrawable
 
-            estateSelected = idOfEstateSelected?.let { estateViewModel.getEstateById(it) }
+            estateSelected = idOfEstateSelected?.let { detailViewModel.getEstateById(it) }
             estateSelected?.photosUriWithDescriptions?.forEach {
                 // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
                 var newThumbnail = TextView(this)
@@ -92,6 +90,14 @@ class DetailEstateActivity : AppCompatActivity() {
             detailEstate_postalCode.text = estateSelected?.address?.get(2)
             detailEstate_city.text = estateSelected?.address?.get(3)
             detailEstate_price.text = estateSelected?.price.toString()
+
+            buttonEdit.setOnClickListener(object : View.OnClickListener{
+                override fun onClick(v: View?) {
+                    // Todo : Pass Estate to CreateEstateActivity
+                }
+            })
+
+        // Todo : geolocation + if data is not null = use lite mode maps android API to show marker on map
 
     }
 

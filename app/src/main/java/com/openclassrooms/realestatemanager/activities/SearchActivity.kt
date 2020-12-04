@@ -170,6 +170,7 @@ class SearchActivity : AppCompatActivity() {
                     Toast.makeText(p0?.context, getString(R.string.estate_type_not_selected), Toast.LENGTH_SHORT).show()
                     return
                 }
+                // Todo : launch search query
             }
         })
 

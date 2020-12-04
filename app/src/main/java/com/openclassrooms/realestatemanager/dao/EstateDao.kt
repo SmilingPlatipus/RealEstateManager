@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.openclassrooms.realestatemanager.model.Estate
 
 @Dao
@@ -18,6 +19,8 @@ interface EstateDao{
     @Update
     suspend fun update(estate: Estate)
 
-    @Query("DELETE FROM estate")
-    fun deleteAll()
+    @RawQuery
+    fun searchForEstate(query : SupportSQLiteQuery) : MutableList<Estate>
+
+    // Todo : create a SupportSQLiteQuery here and pass it to searchForEstate
 }

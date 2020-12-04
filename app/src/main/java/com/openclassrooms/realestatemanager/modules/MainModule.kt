@@ -14,7 +14,9 @@ import com.openclassrooms.realestatemanager.db.EstateDatabase
 import com.openclassrooms.realestatemanager.repositories.EstateDataRepository
 import com.openclassrooms.realestatemanager.activities.CreateEstateActivity.NearbyServices
 import com.openclassrooms.realestatemanager.model.EstatePhoto
+import com.openclassrooms.realestatemanager.viewModels.DetailViewModel
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
+import com.openclassrooms.realestatemanager.viewModels.SearchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -27,6 +29,8 @@ import java.util.*
 @JvmField
 val mainModule = module {
     viewModel { EstateViewModel(get())}
+    viewModel { DetailViewModel(get())}
+    viewModel { SearchViewModel(get())}
 
 
     fun provideDb(context: Context): EstateDatabase {
