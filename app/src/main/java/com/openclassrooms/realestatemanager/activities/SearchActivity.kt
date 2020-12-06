@@ -12,7 +12,9 @@ import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.slider.RangeSlider
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
+import com.openclassrooms.realestatemanager.viewModels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_search.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -30,12 +32,14 @@ class SearchActivity : AppCompatActivity() {
     var radioButton_estateType : EstateTypes? = null
     var radioButton_searchStatus : SearchStatus? = null
 
+    val searchViewmodel by viewModel<SearchViewModel>()
+
     enum class EstateTypes{
         APARTMENT, HOUSE, DUPLEX, PENTHOUSE
     }
 
     enum class SearchStatus{
-        ALL, FOR_SALE, SOLD
+        ALL, FORSALE, SOLD
     }
 
     enum class NearbyServices{
@@ -48,9 +52,9 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        val fragment = RecyclerViewFragment.newInstance()
+        var fragment = RecyclerViewFragment.newInstance()
         val fragmentManager = supportFragmentManager
-        val fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
+        var fragmentTransaction : FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.add(R.id.estatesView,fragment)
         fragmentTransaction.commit()
 
@@ -170,8 +174,35 @@ class SearchActivity : AppCompatActivity() {
                     Toast.makeText(p0?.context, getString(R.string.estate_type_not_selected), Toast.LENGTH_SHORT).show()
                     return
                 }
-                // Todo : launch search query
+
+                var poiList : MutableList<String> = emptyList<String>().toMutableList()
+                checkboxesStatus.forEach {
+                    poiList.add(it.name.toLowerCase())
+                }
+                // Launch search with search parameters
+                val searchResult = searchViewmodel.searchForEstate(
+                        poiList,
+                        radioButton_estateType!!.name.toLowerCase(),
+                        radioButton_searchStatus!!.name.toLowerCase(),
+                        rangeSlider_price_minValue!!,
+                        rangeSlider_price_maxValue!!,
+                        rangeSlider_size_minValue!!,
+                        rangeSlider_size_maxValue!!,
+                        rangeSlider_rooms_minValue!!,
+                        rangeSlider_rooms_maxValue!!)
+
+                searchResult?.forEach{
+                    Log.i(TAG, "onClick: searchResult : $it")
+                }
+
+                // Updating UI
+
+                fragment = RecyclerViewFragment.newSearchInstance(searchResult)
+                fragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.estatesView,fragment)
+                fragmentTransaction.commit()
             }
+
         })
 
         radioGroup_search_status.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener{
@@ -179,7 +210,7 @@ class SearchActivity : AppCompatActivity() {
                 when(p0?.checkedRadioButtonId)
                 {
                     R.id.radioButton_status_all -> radioButton_searchStatus = SearchStatus.ALL
-                    R.id.radioButton_status_forSale -> radioButton_searchStatus = SearchStatus.FOR_SALE
+                    R.id.radioButton_status_forSale -> radioButton_searchStatus = SearchStatus.FORSALE
                     R.id.radioButton_status_sold -> radioButton_searchStatus = SearchStatus.SOLD
                 }
             }
@@ -226,6 +257,13 @@ class SearchActivity : AppCompatActivity() {
                 checkboxesStatus.removeAll(NearbyServices.values())
                 checkAllCheckboxes(false)
                 checkBox_all.isChecked = false
+
+                // Updating UI
+
+                fragment = RecyclerViewFragment.newInstance()
+                fragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.estatesView,fragment)
+                fragmentTransaction.commit()
             }
         })
     }

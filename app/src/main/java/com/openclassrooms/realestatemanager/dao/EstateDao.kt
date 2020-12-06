@@ -20,7 +20,7 @@ interface EstateDao{
     suspend fun update(estate: Estate)
 
     @RawQuery
-    fun searchForEstate(query : SupportSQLiteQuery) : MutableList<Estate>
+    fun searchForEstate(query : SupportSQLiteQuery) : MutableList<Estate>?
 
-    // Todo : create a SupportSQLiteQuery here and pass it to searchForEstate
+
 }

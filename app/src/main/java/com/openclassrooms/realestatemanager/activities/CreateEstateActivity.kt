@@ -210,7 +210,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                 }
                 var poiList : MutableList<String> = emptyList<String>().toMutableList()
                 checkboxesStatus.forEach {
-                    poiList.add(it.name)
+                    poiList.add(it.name.toLowerCase())
                 }
                 var newEstate = Estate(
                         spinner_selection,
@@ -225,7 +225,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                                 editText_address_of_estate_postalCode.text.toString(),
                                 editText_address_of_estate_city.text.toString()),
                         poiList,
-                        "for sale",
+                        SearchActivity.SearchStatus.FORSALE.name.toLowerCase(),
                         OffsetDateTime.now(),
                         null,
                         "Jean Michel",

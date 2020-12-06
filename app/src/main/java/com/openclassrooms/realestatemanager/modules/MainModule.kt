@@ -2,7 +2,9 @@ package com.openclassrooms.realestatemanager.modules
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.res.Resources
 import android.net.Uri
+import android.provider.Settings.Global.getString
 import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -13,6 +15,7 @@ import com.openclassrooms.realestatemanager.dao.EstateDao
 import com.openclassrooms.realestatemanager.db.EstateDatabase
 import com.openclassrooms.realestatemanager.repositories.EstateDataRepository
 import com.openclassrooms.realestatemanager.activities.CreateEstateActivity.NearbyServices
+import com.openclassrooms.realestatemanager.activities.SearchActivity
 import com.openclassrooms.realestatemanager.model.EstatePhoto
 import com.openclassrooms.realestatemanager.viewModels.DetailViewModel
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
@@ -51,20 +54,20 @@ val mainModule = module {
                         checkboxesStatus.add(NearbyServices.HOSPITAL)
                         checkboxesStatus.add(NearbyServices.PARK)
                         checkboxesStatus.forEach {
-                            poiList.add(it.name)
+                            poiList.add(it.name.toLowerCase())
                         }
-                        var somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison1,"Juste un appart")
+                        var somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison1,"Juste un appart")
                         photoList.add(somePhoto)
 
-                        contentValues.put("type","appartment")
+                        contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",150000.0)
                         contentValues.put("size",120f)
                         contentValues.put("rooms",3)
-                        contentValues.put("description","Nice apartment on Cahors")
+                        contentValues.put("description","Nice house in Cahors")
                         contentValues.put("poi", Gson().toJson(poiList))
                         contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
-                        contentValues.put("status","for sale")
+                        contentValues.put("status",SearchActivity.SearchStatus.FORSALE.name.toLowerCase())
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("saleDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("dealer","Jean Michel")
@@ -75,10 +78,10 @@ val mainModule = module {
                         photoList.clear()
 
                         address = listOf("160","Rue des Cadourques","46000","Cahors")
-                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison2,"Juste un appart")
+                        somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison2,"Juste un appart")
                         photoList.add(somePhoto)
 
-                        contentValues.put("type","house")
+                        contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",300000.0)
                         contentValues.put("size",200f)
                         contentValues.put("rooms",5)
@@ -86,7 +89,7 @@ val mainModule = module {
                         contentValues.put("poi", Gson().toJson(poiList))
                         contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
-                        contentValues.put("status","for sale")
+                        contentValues.put("status",SearchActivity.SearchStatus.FORSALE.name.toLowerCase())
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("saleDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("dealer","Jean Michel")
@@ -97,10 +100,10 @@ val mainModule = module {
                         photoList.clear()
 
                         address = listOf("292","Rue Joachim Murat","46000","Cahors")
-                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison3,"Juste un appart")
+                        somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison3,"Juste un appart")
                         photoList.add(somePhoto)
 
-                        contentValues.put("type","penthouse")
+                        contentValues.put("type",SearchActivity.EstateTypes.PENTHOUSE.name.toLowerCase())
                         contentValues.put("price",1000000.0)
                         contentValues.put("size",250f)
                         contentValues.put("rooms",8)
@@ -108,7 +111,7 @@ val mainModule = module {
                         contentValues.put("poi", Gson().toJson(poiList))
                         contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
-                        contentValues.put("status","sold")
+                        contentValues.put("status",SearchActivity.SearchStatus.SOLD.name.toLowerCase())
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("saleDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("dealer","Bertrand")
@@ -119,10 +122,10 @@ val mainModule = module {
                         photoList.clear()
 
                         address = listOf("50","Avenue Edouard Herriot","46000","Cahors")
-                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison4,"Juste un appart")
+                        somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison4,"Juste un appart")
                         photoList.add(somePhoto)
 
-                        contentValues.put("type","house")
+                        contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",100000.0)
                         contentValues.put("size",80f)
                         contentValues.put("rooms",3)
@@ -130,7 +133,7 @@ val mainModule = module {
                         contentValues.put("poi", Gson().toJson(poiList))
                         contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
-                        contentValues.put("status","for sale")
+                        contentValues.put("status",SearchActivity.SearchStatus.FORSALE.name.toLowerCase())
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("saleDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("dealer","Bertrand")
@@ -141,10 +144,10 @@ val mainModule = module {
                         photoList.clear()
 
                         address = listOf("13","Hameau du Pouget","46090","Pradines")
-                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison5,"Juste un appart")
+                        somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison5,"Juste un appart")
                         photoList.add(somePhoto)
 
-                        contentValues.put("type","house")
+                        contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",200000.0)
                         contentValues.put("size",130f)
                         contentValues.put("rooms",5)
@@ -152,7 +155,7 @@ val mainModule = module {
                         contentValues.put("poi", Gson().toJson(poiList))
                         contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
-                        contentValues.put("status","for sale")
+                        contentValues.put("status",SearchActivity.SearchStatus.FORSALE.name.toLowerCase())
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("saleDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("dealer","Bertrand")
@@ -163,10 +166,10 @@ val mainModule = module {
                         photoList.clear()
 
                         address = listOf("108","Rue des Augustins","46000","Cahors")
-                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison6,"Juste un appart")
+                        somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison6,"Juste un appart")
                         photoList.add(somePhoto)
 
-                        contentValues.put("type","appartment")
+                        contentValues.put("type",SearchActivity.EstateTypes.APARTMENT.name.toLowerCase())
                         contentValues.put("price",100000.0)
                         contentValues.put("size",70f)
                         contentValues.put("rooms",3)
@@ -174,7 +177,7 @@ val mainModule = module {
                         contentValues.put("poi", Gson().toJson(poiList))
                         contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
-                        contentValues.put("status","for sale")
+                        contentValues.put("status",SearchActivity.SearchStatus.FORSALE.name.toLowerCase())
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("saleDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("dealer","Jean Michel")
@@ -185,10 +188,10 @@ val mainModule = module {
                         photoList.clear()
 
                         address = listOf("382","Rue Président Wilson","46000","Cahors")
-                        somePhoto = EstatePhoto("android.resource://com.openclassrooms.realestatemanager/" + R.drawable.maison7,"Juste un appart")
+                        somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison7,"Juste un appart")
                         photoList.add(somePhoto)
 
-                        contentValues.put("type","house")
+                        contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",250000.0)
                         contentValues.put("size",130f)
                         contentValues.put("rooms",5)
@@ -196,7 +199,7 @@ val mainModule = module {
                         contentValues.put("poi", Gson().toJson(poiList))
                         contentValues.put("photosUriWithDescriptions", Gson().toJson(photoList))
                         contentValues.put("address",Gson().toJson(address))
-                        contentValues.put("status","for sale")
+                        contentValues.put("status",SearchActivity.SearchStatus.SOLD.name.toLowerCase())
                         contentValues.put("creationDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("saleDate", OffsetDateTime.now().format(formatter))
                         contentValues.put("dealer","Jean Michel")

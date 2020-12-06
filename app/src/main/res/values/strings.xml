@@ -68,4 +68,7 @@
     <string name="buttonSimulate">Calculate</string>
     <string name="create_estate_photo_not_selected">You need to select at least a photo to create a new real estate</string>
 
+    <!-- Generic names and other stuff for database purpose -->
+    <string name="standard_drawable_uri">android.resource://com.openclassrooms.realestatemanager/drawable/</string>
+
 </resources>
