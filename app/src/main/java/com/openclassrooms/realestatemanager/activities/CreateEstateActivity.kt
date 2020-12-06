@@ -28,12 +28,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.slider.Slider
-import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.model.EstatePhoto
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_create_estate.*
+import com.openclassrooms.realestatemanager.BuildConfig
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.*
 import java.text.NumberFormat

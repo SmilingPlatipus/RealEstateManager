@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.viewModels
 
+import android.annotation.TargetApi
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +22,8 @@ class SearchViewModel(estateDataRepository: EstateDataRepository) : ViewModel() 
         allEstates = repository.allEstates
     }
 
-    fun searchForEstate(estatePoi: List<String>,
+    @TargetApi(Build.VERSION_CODES.N)
+    fun searchForEstate(estatePoi: MutableList<String>,
                         estateType: String,
                         estateStatus: String,
                         estatePrice_min: Float,
@@ -30,18 +33,33 @@ class SearchViewModel(estateDataRepository: EstateDataRepository) : ViewModel() 
                         estateRooms_min: Float,
                         estateRooms_max: Float): MutableList<Estate>?
     {
-        var queryResult = repository.searchForEstate(estateType,estateStatus,estatePrice_min,estatePrice_max,estateSize_min,estateSize_max,estateRooms_min,estateRooms_max)
+        var queryResult = repository.searchForEstate(
+                estateType,
+                estateStatus,
+                estatePrice_min,
+                estatePrice_max,
+                estateSize_min,
+                estateSize_max,
+                estateRooms_min,
+                estateRooms_max)
 
         queryResult?.forEach {
-            //val poiType = object : TypeToken<List<String>>() {}.type
-            //val poiFromResult = Gson().fromJson<List<String>>(it.poi, poiType)
+            val poiType = object : TypeToken<MutableList<String>>() {}.type
+            var poiFromResult : MutableList<String> = Gson().fromJson(it.poi.toString(),poiType)
             //Log.i(TAG, "searchForEstate: $poiFromResult")
 
             // Todo : retrieve list of String from json and compare to estatePoi
             // Todo : need to handle "all" for estate status
-        }
 
+            poiFromResult.forEach{
+                for ((i, element) in it.withIndex())
+                    if (!it.contains(estatePoi[i])){
+                        poiFromResult.removeAt(i)
+                        break
+                    }
+            }
 
+            }
         return queryResult
     }
 }

@@ -36,7 +36,7 @@ class EstateDataRepository (private val estateDao: EstateDao){
         val searchEstateQuery = SimpleSQLiteQuery(
             "SELECT * FROM estate "+
                     "WHERE type IN ('$estateType') "+
-                    "AND status IN ('$estateStatus') "+
+                    "AND status IN ('$estateStatus', ${SearchActivity.SearchStatus.ALL.name.toLowerCase()}) "+
                     "AND price BETWEEN $estatePrice_min AND $estatePrice_max "+
                     "AND size BETWEEN $estateSize_min AND $estateSize_max "+
                     "AND rooms BETWEEN $estateRooms_min AND $estateRooms_max", arrayOf<SearchEstateQuery>())
