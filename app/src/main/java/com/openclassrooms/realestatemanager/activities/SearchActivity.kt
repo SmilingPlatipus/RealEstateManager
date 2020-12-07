@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.activities
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,12 +9,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.MotionLayout.TransitionListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.slider.RangeSlider
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
 import com.openclassrooms.realestatemanager.viewModels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.empty_recyclerview.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.NumberFormat
 import java.util.*
@@ -175,7 +178,7 @@ class SearchActivity : AppCompatActivity() {
                     return
                 }
 
-                var poiList : MutableList<String> = emptyList<String>().toMutableList()
+                var poiList: MutableList<String> = emptyList<String>().toMutableList()
                 checkboxesStatus.forEach {
                     poiList.add(it.name.toLowerCase())
                 }
@@ -191,18 +194,25 @@ class SearchActivity : AppCompatActivity() {
                         rangeSlider_rooms_minValue!!,
                         rangeSlider_rooms_maxValue!!)
 
-                searchResult?.forEach{
+                searchResult?.forEach {
                     Log.i(TAG, "onClick: searchResult : $it")
                 }
 
-                // Updating UI
-
-                fragment = RecyclerViewFragment.newSearchInstance(searchResult)
-                fragmentTransaction = fragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.estatesView,fragment)
-                fragmentTransaction.commit()
+                // Updating UI if there is something to show
+                if (searchResult != null) {
+                    emptyRecyclerView.visibility = View.INVISIBLE
+                    fragment = RecyclerViewFragment.newSearchInstance(searchResult)
+                    fragmentTransaction = fragmentManager.beginTransaction()
+                    fragmentTransaction.replace(R.id.estatesView, fragment)
+                    fragmentTransaction.commit()
+                }
+                else{
+                    fragmentTransaction = fragmentManager.beginTransaction()
+                    fragmentTransaction.remove(fragment)
+                    fragmentTransaction.commit()
+                    emptyRecyclerView.visibility = View.VISIBLE
+                }
             }
-
         })
 
         radioGroup_search_status.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener{
@@ -260,6 +270,7 @@ class SearchActivity : AppCompatActivity() {
 
                 // Updating UI
 
+                emptyRecyclerView.visibility = View.INVISIBLE
                 fragment = RecyclerViewFragment.newInstance()
                 fragmentTransaction = fragmentManager.beginTransaction()
                 fragmentTransaction.replace(R.id.estatesView,fragment)

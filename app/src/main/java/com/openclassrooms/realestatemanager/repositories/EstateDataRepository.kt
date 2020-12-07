@@ -1,16 +1,15 @@
 package com.openclassrooms.realestatemanager.repositories
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
-import androidx.sqlite.db.SupportSQLiteQuery
 import com.openclassrooms.realestatemanager.activities.SearchActivity
 import com.openclassrooms.realestatemanager.dao.EstateDao
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.model.SearchEstateQuery
-import java.util.*
 
 class EstateDataRepository (private val estateDao: EstateDao){
-
+    val TAG = "EstateDataRepository"
     val allEstates: LiveData<MutableList<Estate>> = estateDao.getAll()
 
     fun getEstateById(estateId: Long): Estate{
@@ -33,13 +32,20 @@ class EstateDataRepository (private val estateDao: EstateDao){
                         estateSize_max : Float,
                         estateRooms_min : Float,
                         estateRooms_max : Float): MutableList<Estate>? {
+        var allStatus : String? = null
+        if (estateStatus.compareTo(SearchActivity.SearchStatus.ALL.name.toLowerCase()) == 0)
+            allStatus = SearchActivity.SearchStatus.FORSALE.name.toLowerCase() + "','" + SearchActivity.SearchStatus.SOLD.name.toLowerCase()
+        else
+            allStatus = estateStatus
         val searchEstateQuery = SimpleSQLiteQuery(
             "SELECT * FROM estate "+
                     "WHERE type IN ('$estateType') "+
-                    "AND status IN ('$estateStatus', ${SearchActivity.SearchStatus.ALL.name.toLowerCase()}) "+
+                    "AND status IN ('$allStatus') " +
                     "AND price BETWEEN $estatePrice_min AND $estatePrice_max "+
                     "AND size BETWEEN $estateSize_min AND $estateSize_max "+
                     "AND rooms BETWEEN $estateRooms_min AND $estateRooms_max", arrayOf<SearchEstateQuery>())
+
+        Log.i(TAG, "searchForEstate: ${searchEstateQuery.sql}")
         return estateDao.searchForEstate(searchEstateQuery)
     }
 

@@ -296,7 +296,10 @@
         android:id="@+id/estatesView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/recyclerview_size"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+        <include layout="@layout/empty_recyclerview"
+            android:visibility="gone"/>
+    </FrameLayout>
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

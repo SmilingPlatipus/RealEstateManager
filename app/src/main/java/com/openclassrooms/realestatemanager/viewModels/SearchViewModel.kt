@@ -31,8 +31,7 @@ class SearchViewModel(estateDataRepository: EstateDataRepository) : ViewModel() 
                         estateSize_min: Float,
                         estateSize_max: Float,
                         estateRooms_min: Float,
-                        estateRooms_max: Float): MutableList<Estate>?
-    {
+                        estateRooms_max: Float): MutableList<Estate>? {
         var queryResult = repository.searchForEstate(
                 estateType,
                 estateStatus,
@@ -43,23 +42,19 @@ class SearchViewModel(estateDataRepository: EstateDataRepository) : ViewModel() 
                 estateRooms_min,
                 estateRooms_max)
 
+        var elementsToRemove = mutableListOf<Estate>()
         queryResult?.forEach {
             val poiType = object : TypeToken<MutableList<String>>() {}.type
-            var poiFromResult : MutableList<String> = Gson().fromJson(it.poi.toString(),poiType)
-            //Log.i(TAG, "searchForEstate: $poiFromResult")
+            var poisFromResult: MutableList<String> = Gson().fromJson(it.poi.toString(), poiType)
 
-            // Todo : retrieve list of String from json and compare to estatePoi
-            // Todo : need to handle "all" for estate status
-
-            poiFromResult.forEach{
-                for ((i, element) in it.withIndex())
-                    if (!it.contains(estatePoi[i])){
-                        poiFromResult.removeAt(i)
-                        break
-                    }
+            if (!poisFromResult.containsAll(estatePoi)) {
+                elementsToRemove.add(it)
             }
-
-            }
+        }
+        queryResult?.removeAll(elementsToRemove)
+        if (queryResult.isNullOrEmpty())
+            return null
+        else
         return queryResult
     }
 }

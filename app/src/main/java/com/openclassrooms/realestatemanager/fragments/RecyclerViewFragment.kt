@@ -29,29 +29,29 @@ class RecyclerViewFragment(val valuesToDisplay : MutableList<Estate>?) : Fragmen
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.estate_recyclerview,container,false)
+        var view = inflater.inflate(R.layout.estate_recyclerview,container,false)
         if (values == null) {
             adapter = EstateListAdapter(view.context)
 
             estateViewModel.allEstates.observe(requireActivity()) {
-                recyclerview = view.findViewById(R.id.estate_list)
-                val layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
-                adapter?.setEstateList(it)
-                recyclerview.adapter = adapter
-                recyclerview.layoutManager = layoutManager
-                recyclerview.scrollBy(0, 0)
+                    recyclerview = view.findViewById(R.id.estate_list)
+                    val layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
+                    adapter?.setEstateList(it)
+                    recyclerview.adapter = adapter
+                    recyclerview.layoutManager = layoutManager
+                    recyclerview.scrollBy(0, 0)
             }
             return view
         }
         else{
-            adapter = EstateListAdapter(view.context)
-            recyclerview = view.findViewById(R.id.estate_list)
-            val layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
-            adapter?.setEstateList(values)
-            recyclerview.adapter = adapter
-            recyclerview.layoutManager = layoutManager
-            recyclerview.scrollBy(0, 0)
-            return view
+                adapter = EstateListAdapter(view.context)
+                recyclerview = view.findViewById(R.id.estate_list)
+                val layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.HORIZONTAL, false)
+                adapter?.setEstateList(values)
+                recyclerview.adapter = adapter
+                recyclerview.layoutManager = layoutManager
+                recyclerview.scrollBy(0, 0)
+                return view
         }
     }
 }
