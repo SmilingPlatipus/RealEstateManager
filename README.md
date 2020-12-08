@@ -33,6 +33,6 @@ Project is created with:
 
 ## ToDo
 
-- [ ] :pushpin:Screen for searching a real estate inside the SQLite database (need to implement Raw Query)
+- [X] :pushpin:Screen for searching a real estate inside the SQLite database (need to implement Raw Query)
 - [ ] :pushpin:Screen for map
-- [ ] :pushpin:Screen for updating/consulting real estate details
+- [X] :pushpin:Screen for updating/consulting real estate details
