@@ -52,7 +52,6 @@ val mainModule = module {
                         var photoList: MutableList<EstatePhoto> = emptyList<EstatePhoto>().toMutableList()
 
                         checkboxesStatus.add(NearbyServices.HOSPITAL)
-                        checkboxesStatus.add(NearbyServices.PARK)
                         checkboxesStatus.forEach {
                             poiList.add(it.name.toLowerCase())
                         }
@@ -60,7 +59,7 @@ val mainModule = module {
                         photoList.add(somePhoto)
 
                         contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
-                        contentValues.put("price",150000.0)
+                        contentValues.put("price",120000.0)
                         contentValues.put("size",120f)
                         contentValues.put("rooms",3)
                         contentValues.put("description","Nice house in Cahors")
@@ -80,6 +79,10 @@ val mainModule = module {
                         address = listOf("160","Rue des Cadourques","46000","Cahors")
                         somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison2,"Juste un appart")
                         photoList.add(somePhoto)
+                        checkboxesStatus.add(NearbyServices.SCHOOL)
+                        checkboxesStatus.forEach {
+                            poiList.add(it.name.toLowerCase())
+                        }
 
                         contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",300000.0)
@@ -102,6 +105,10 @@ val mainModule = module {
                         address = listOf("292","Rue Joachim Murat","46000","Cahors")
                         somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison3,"Juste un appart")
                         photoList.add(somePhoto)
+                        checkboxesStatus.add(NearbyServices.PARK)
+                        checkboxesStatus.forEach {
+                            poiList.add(it.name.toLowerCase())
+                        }
 
                         contentValues.put("type",SearchActivity.EstateTypes.PENTHOUSE.name.toLowerCase())
                         contentValues.put("price",1000000.0)
@@ -124,6 +131,7 @@ val mainModule = module {
                         address = listOf("50","Avenue Edouard Herriot","46000","Cahors")
                         somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison4,"Juste un appart")
                         photoList.add(somePhoto)
+                        poiList.clear()
 
                         contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",100000.0)
@@ -146,6 +154,10 @@ val mainModule = module {
                         address = listOf("13","Hameau du Pouget","46090","Pradines")
                         somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison5,"Juste un appart")
                         photoList.add(somePhoto)
+                        checkboxesStatus.add(NearbyServices.SHOPS)
+                        checkboxesStatus.forEach {
+                            poiList.add(it.name.toLowerCase())
+                        }
 
                         contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
                         contentValues.put("price",200000.0)
@@ -164,10 +176,18 @@ val mainModule = module {
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
                         photoList.clear()
+                        poiList.clear()
 
                         address = listOf("108","Rue des Augustins","46000","Cahors")
                         somePhoto = EstatePhoto(context.getString(R.string.standard_drawable_uri) + R.drawable.maison6,"Juste un appart")
                         photoList.add(somePhoto)
+                        checkboxesStatus.add(NearbyServices.PARK)
+                        checkboxesStatus.add(NearbyServices.HOSPITAL)
+                        checkboxesStatus.add(NearbyServices.SCHOOL)
+                        checkboxesStatus.add(NearbyServices.SHOPS)
+                        checkboxesStatus.forEach {
+                            poiList.add(it.name.toLowerCase())
+                        }
 
                         contentValues.put("type",SearchActivity.EstateTypes.APARTMENT.name.toLowerCase())
                         contentValues.put("price",100000.0)
@@ -192,7 +212,7 @@ val mainModule = module {
                         photoList.add(somePhoto)
 
                         contentValues.put("type",SearchActivity.EstateTypes.HOUSE.name.toLowerCase())
-                        contentValues.put("price",250000.0)
+                        contentValues.put("price",260000.0)
                         contentValues.put("size",130f)
                         contentValues.put("rooms",5)
                         contentValues.put("description","House in the center of Cahors")

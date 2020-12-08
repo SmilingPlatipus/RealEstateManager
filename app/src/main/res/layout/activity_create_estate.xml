@@ -30,7 +30,7 @@
             android:background="@drawable/rem_icon_partial"
             android:fontFamily="@font/im_fell_english_sc"
             android:paddingTop="16dp"
-            android:text="@string/title_create_estate"
+            android:text="@string/create_estate_title_create"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             android:textSize="30sp"

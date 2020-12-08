@@ -10,6 +10,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -18,6 +21,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -27,6 +31,9 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.slider.Slider
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
@@ -34,6 +41,9 @@ import com.openclassrooms.realestatemanager.model.EstatePhoto
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_create_estate.*
 import com.openclassrooms.realestatemanager.BuildConfig
+import kotlinx.android.synthetic.main.activity_create_estate.top_image
+import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.activity_search.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.*
 import java.text.NumberFormat
@@ -68,12 +78,125 @@ class CreateEstateActivity : AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_estate)
 
+        var bundle = intent.extras
+        val idOfEstateSelected = bundle?.getLong(MainActivity.ID_OF_SELECTED_ESTATE)
+        var estateSelected : Estate? = null
+        var spinnerPosition : Int? = null
 
         val estateTypes = resources.getStringArray(R.array.estate_types)
-        slider_price_value = create_estate_Slider_price.value
-        slider_rooms_value = create_estate_Slider_rooms.value
-        slider_size_value  = create_estate_Slider_size.value
+
+        estateSelected = idOfEstateSelected?.let { estateViewModel.getEstateById(it) }
+
+        // If bundle is not null, it's an estate creation. If not, values are retrieved from database and views initialized.
+
+        if (bundle == null) {
+            top_image.text = getString(R.string.create_estate_title_create)
+            slider_price_value = create_estate_Slider_price.value
+            slider_rooms_value = create_estate_Slider_rooms.value
+            slider_size_value = create_estate_Slider_size.value
+        }
+        else {
+            // Changing title of the page
+            top_image.text = getString(R.string.create_estate_title_update)
+
+            // Updating Sliders values and positions
+            slider_price_value = estateSelected?.price
+            slider_rooms_value = estateSelected?.rooms?.toFloat()
+            slider_size_value = estateSelected?.size
+            create_estate_Slider_price.value = slider_price_value!!
+            create_estate_Slider_rooms.value = slider_rooms_value!!
+            create_estate_Slider_size.value = slider_size_value!!
+
+            // Updating spinner selection
+            estateTypes.forEach {
+                if (it.compareTo(estateSelected?.type.toString()) == 0)
+                    spinnerPosition = estateTypes.indexOf(it)
+            }
+            // Updating checkboxes
+
+            if (estateSelected?.poi?.containsAll(listOf(
+                            NearbyServices.HOSPITAL.name.toLowerCase(),
+                            NearbyServices.SHOPS.name.toLowerCase(),
+                            NearbyServices.SCHOOL.name.toLowerCase(),
+                            NearbyServices.PARK.name.toLowerCase()
+                    )) == true) {
+                create_estate_checkBox_all.isChecked = true
+                checkAllCheckboxes(true)
+                checkboxesStatus = EnumSet.allOf(NearbyServices::class.java)
+            } else
+                estateSelected?.poi?.forEach {
+                    if (it.compareTo(NearbyServices.HOSPITAL.name.toLowerCase()) == 0) {
+                        create_estate_checkBox_hospital.isChecked = true
+                        checkboxesStatus.add(NearbyServices.HOSPITAL)
+                    }
+                    if (it.compareTo(NearbyServices.SHOPS.name.toLowerCase()) == 0) {
+                        create_estate_checkBox_shops.isChecked = true
+                        checkboxesStatus.add(NearbyServices.SHOPS)
+                    }
+                    if (it.compareTo(NearbyServices.PARK.name.toLowerCase()) == 0) {
+                        create_estate_checkBox_park.isChecked = true
+                        checkboxesStatus.add(NearbyServices.PARK)
+                    }
+                    if (it.compareTo(NearbyServices.SCHOOL.name.toLowerCase()) == 0) {
+                        create_estate_checkBox_school.isChecked = true
+                        checkboxesStatus.add(NearbyServices.SCHOOL)
+                    }
+                }
+
+            // Updating EditTexts with data from estate
+            editText_address_of_estate_number.setText(estateSelected?.address?.get(0))
+            editText_address_of_estate_street.setText(estateSelected?.address?.get(1))
+            editText_address_of_estate_postalCode.setText(estateSelected?.address?.get(2))
+            editText_address_of_estate_city.setText(estateSelected?.address?.get(3))
+            editText_description_of_estate.setText(estateSelected?.description)
+
+            // Changing button Create to Update
+            buttonCreate.text = getString(R.string.create_estate_button_update)
+
+            var drawableHalfShade = ContextCompat.getDrawable(this, R.drawable.thumbnail_shade50) as GradientDrawable
+            var drawableShade = ContextCompat.getDrawable(this, R.drawable.thumbnail_shade80) as GradientDrawable
+            drawableHalfShade.setSize(150, 150)
+            drawableShade.setSize(150, 150)
+            lateinit var backgroundWithShade: LayerDrawable
+
+            estateSelected?.photosUriWithDescriptions?.forEach {
+                // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
+                var newThumbnail = TextView(this)
+                newThumbnail.layoutParams = RelativeLayout.LayoutParams(400, 400)
+                newThumbnail.gravity = Gravity.BOTTOM
+                var uriPhoto = Uri.parse(it?.uri)
+                lateinit var drawable: Drawable
+                Glide.with(this)
+                        .asDrawable()
+                        .load(uriPhoto)
+                        .into(object : SimpleTarget<Drawable>() {
+                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                drawable = resource
+                                newThumbnail.text = it?.description
+                                backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableHalfShade))
+                                backgroundWithShade.setLayerGravity(1, Gravity.BOTTOM)
+                                newThumbnail.background = backgroundWithShade
+                            }
+                        })
+                newThumbnail.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View?) {
+                        backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableShade))
+                        backgroundWithShade.setLayerGravity(1, Gravity.BOTTOM)
+                        newThumbnail.background = backgroundWithShade
+                        newThumbnail.setTextColor(Color.YELLOW)
+                    }
+                })
+
+                photos.addView(newThumbnail)
+                photoList.add(it)
+            }
+        }
+
         create_estate_spinner_typeOfEstate.adapter = ArrayAdapter(this, R.layout.create_estate_spinner_row, estateTypes)
+
+        if (spinnerPosition != null)
+            create_estate_spinner_typeOfEstate.setSelection(spinnerPosition!!)
+
         create_estate_spinner_typeOfEstate.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 spinner_selection = estateTypes[p2]
@@ -212,6 +335,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                 checkboxesStatus.forEach {
                     poiList.add(it.name.toLowerCase())
                 }
+
                 var newEstate = Estate(
                         spinner_selection,
                         slider_price_value,
@@ -232,8 +356,15 @@ class CreateEstateActivity : AppCompatActivity()  {
                         null,
                         null)
 
-                estateViewModel.insert(newEstate)
-                Toast.makeText(p0?.context,"Real estate created succesfully",Toast.LENGTH_LONG).show()
+                if (idOfEstateSelected == null) {
+                    estateViewModel.insert(newEstate)
+                    Toast.makeText(p0?.context, getString(R.string.create_estate_creation), Toast.LENGTH_LONG).show()
+                }
+                else{
+                    newEstate.id = estateSelected?.id!!
+                    estateViewModel.update(newEstate)
+                    Toast.makeText(p0?.context, getString(R.string.create_estate_update), Toast.LENGTH_LONG).show()
+                }
                 finish()
             }
         })
@@ -383,7 +514,6 @@ class CreateEstateActivity : AppCompatActivity()  {
             override fun onClick(v: View?) {
                 photoList.removeAt(photos.indexOfChild(newThumbnail))
                 photos.removeView(newThumbnail)
-                //outputFile.delete()
 
                 photoList.forEach {
                     Log.i(TAG, "onActivityResult: photoList : ${it}")

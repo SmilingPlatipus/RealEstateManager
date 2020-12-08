@@ -16,11 +16,9 @@ interface EstateDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(estate: Estate): Long
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(estate: Estate)
 
     @RawQuery
     fun searchForEstate(query : SupportSQLiteQuery) : MutableList<Estate>?
-
-
 }

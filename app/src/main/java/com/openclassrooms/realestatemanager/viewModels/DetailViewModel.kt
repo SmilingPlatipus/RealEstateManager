@@ -8,6 +8,6 @@ class DetailViewModel(estateDataRepository: EstateDataRepository) : ViewModel() 
     private val repository: EstateDataRepository = estateDataRepository
 
     fun getEstateById(id: Long): Estate {
-        return repository.getEstateById(id) as Estate
+        return repository.getEstateById(id)
     }
 }

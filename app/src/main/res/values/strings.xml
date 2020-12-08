@@ -7,6 +7,10 @@
     <string name="create_button">Create new house</string>
     <string name="map_button">Map</string>
     <string name="loan_button">Make a loan simulation</string>
+    <string name="main_activity_loanButton_tooltip">Click this button to launch the loan simulator</string>
+    <string name="main_activity_searchButton_tooltip">Click this button to launch the search engine</string>
+    <string name="main_activity_createButton_tooltip">Click this button to create a new real estate</string>
+    <string name="main_activity_mapButton_tooltip">Click this button to launch the global map with all real estates</string>
 
     <!-- Loan simulation activity -->
     <string name="title_loan_simulation">Loan simulation</string>
@@ -46,7 +50,7 @@
     <string name="estate_type_not_selected">You didn\'t select a real estate type, please do it</string>
 
     <!-- CreateEstate activity -->
-    <string name="title_create_estate">Create a real estate</string>
+    <string name="create_estate_title_create">Create a real estate</string>
     <string name="address_of_estate_number">n°</string>
     <string name="address_of_estate_street">street</string>
     <string name="address_of_estate_postalCode">postal code</string>
@@ -67,6 +71,10 @@
     <string name="buttonReset">Reset</string>
     <string name="buttonSimulate">Calculate</string>
     <string name="create_estate_photo_not_selected">You need to select at least a photo to create a new real estate</string>
+    <string name="create_estate_button_update">Update</string>
+    <string name="create_estate_creation">Real estate created successfully</string>
+    <string name="create_estate_update">Real estate updated successfully</string>
+    <string name="create_estate_title_update">Update a real estate</string>
 
     <!-- Generic names and other stuff for database purpose -->
     <string name="standard_drawable_uri">android.resource://com.openclassrooms.realestatemanager/drawable/</string>

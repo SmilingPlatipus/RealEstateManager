@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
     enum class Activities {
-        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, SEARCH_ACTIVITY, CREATE_ESTATE_ACTIVITY
+        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, SEARCH_ACTIVITY, CREATE_ESTATE_ACTIVITY, DETAIL_ACTIVITY
     }
 
     lateinit var previousActivityWas : Activities

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.activities
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -34,6 +35,7 @@ class DetailEstateActivity : AppCompatActivity() {
         var bundle = intent.extras
         val idOfEstateSelected = bundle?.getLong(ID_OF_SELECTED_ESTATE)
         var estateSelected : Estate? = null
+        // This is the Points Of Interests, which are shown on TextView
         var poiText : String? = null
 
         var drawableHalfShade = ContextCompat.getDrawable(this,R.drawable.thumbnail_shade50) as GradientDrawable
@@ -93,7 +95,10 @@ class DetailEstateActivity : AppCompatActivity() {
 
             buttonEdit.setOnClickListener(object : View.OnClickListener{
                 override fun onClick(v: View?) {
-                    // Todo : Pass Estate to CreateEstateActivity
+                    var updateIntent = Intent(v?.context,CreateEstateActivity::class.java)
+                    updateIntent.putExtra(ID_OF_SELECTED_ESTATE,idOfEstateSelected)
+                    startActivity(updateIntent)
+                    finish()
                 }
             })
 
