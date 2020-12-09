@@ -9,10 +9,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.*
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -42,8 +39,6 @@ import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_create_estate.*
 import com.openclassrooms.realestatemanager.BuildConfig
 import kotlinx.android.synthetic.main.activity_create_estate.top_image
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_search.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.*
 import java.text.NumberFormat
@@ -153,42 +148,16 @@ class CreateEstateActivity : AppCompatActivity()  {
             // Changing button Create to Update
             buttonCreate.text = getString(R.string.create_estate_button_update)
 
-            var drawableHalfShade = ContextCompat.getDrawable(this, R.drawable.thumbnail_shade50) as GradientDrawable
-            var drawableShade = ContextCompat.getDrawable(this, R.drawable.thumbnail_shade80) as GradientDrawable
-            drawableHalfShade.setSize(150, 150)
-            drawableShade.setSize(150, 150)
-            lateinit var backgroundWithShade: LayerDrawable
+            // All photos are retrieved from estate and launched in the photoList
 
             estateSelected?.photosUriWithDescriptions?.forEach {
                 // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
-                var newThumbnail = TextView(this)
-                newThumbnail.layoutParams = RelativeLayout.LayoutParams(400, 400)
-                newThumbnail.gravity = Gravity.BOTTOM
                 var uriPhoto = Uri.parse(it?.uri)
-                lateinit var drawable: Drawable
-                Glide.with(this)
-                        .asDrawable()
-                        .load(uriPhoto)
-                        .into(object : SimpleTarget<Drawable>() {
-                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                                drawable = resource
-                                newThumbnail.text = it?.description
-                                backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableHalfShade))
-                                backgroundWithShade.setLayerGravity(1, Gravity.BOTTOM)
-                                newThumbnail.background = backgroundWithShade
-                            }
-                        })
-                newThumbnail.setOnClickListener(object : View.OnClickListener {
-                    override fun onClick(v: View?) {
-                        backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableShade))
-                        backgroundWithShade.setLayerGravity(1, Gravity.BOTTOM)
-                        newThumbnail.background = backgroundWithShade
-                        newThumbnail.setTextColor(Color.YELLOW)
-                    }
-                })
-
-                photos.addView(newThumbnail)
-                photoList.add(it)
+                var inputStream = contentResolver.openInputStream(uriPhoto)
+                val matrix = turnPhotoTheRightWay(inputStream)
+                var photoBitmap = MediaStore.Images.Media.getBitmap(contentResolver,uriPhoto)
+                photoBitmap = Bitmap.createBitmap(photoBitmap, 0, 0, photoBitmap.width, photoBitmap.height, matrix, true)
+                addNewThumbnailToPhotoList(uriPhoto, photoBitmap)
             }
         }
 
@@ -474,8 +443,9 @@ class CreateEstateActivity : AppCompatActivity()  {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
             return
         }
-        val uri: Uri? = data?.data
-        var inputStream = uri?.let { contentResolver.openInputStream(it) }
+
+        val uri: Uri = uriPhoto
+        var inputStream = uri?.let { contentResolver.openInputStream(it) }!!
         when (requestCode)
         {
             // This is the photo taken by the user (saved in the gallery for testing purposes)
@@ -491,7 +461,8 @@ class CreateEstateActivity : AppCompatActivity()  {
                 outputFile = createNewJpegFile()
             }
         }
-        var matrix = turnPhotoTheRightWay(inputStream)
+
+        val matrix = turnPhotoTheRightWay(inputStream)
         photo = Bitmap.createBitmap(photo, 0, 0, photo.width, photo.height, matrix, true)
         // Saving selected image into the external directory of the app
         uriPhoto = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", outputFile)
@@ -499,106 +470,123 @@ class CreateEstateActivity : AppCompatActivity()  {
         // Adding photo uri to the list to be saved
         photoList.add(EstatePhoto(uriPhoto.toString()))
 
+        addNewThumbnailToPhotoList(uriPhoto, photo)
+    }
+
+    private fun addNewThumbnailToPhotoList(uri : Uri,bitmap: Bitmap) {
+        photoList.add(EstatePhoto(uri.toString()))
         // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
-        var newThumbnail : RelativeLayout = RelativeLayout(this)
-        newThumbnail.background = BitmapDrawable(resources, photo)
+        val newThumbnail = RelativeLayout(this)
+        newThumbnail.background = BitmapDrawable(resources, bitmap)
         var closeButtonThumbnail : ImageButton = ImageButton(this)
         closeButtonThumbnail.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
-        newThumbnail.layoutParams = RelativeLayout.LayoutParams(250, 250)
-        var layoutParamsForCloseButton : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(40, 40)
+        newThumbnail.layoutParams = RelativeLayout.LayoutParams(
+                resources.getDimension(R.dimen.thumbnail_width).toInt(),
+                resources.getDimension(R.dimen.thumbnail_height).toInt())
+        var layoutParamsForCloseButton : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
+                resources.getDimension(R.dimen.thumbnail_close_button_width).toInt(),
+                resources.getDimension(R.dimen.thumbnail_close_button_height).toInt())
         layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_END)
         layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_TOP)
         layoutParamsForCloseButton.setMargins(16, 16, 16, 16)
         closeButtonThumbnail.layoutParams = layoutParamsForCloseButton
+        closeButtonThumbnail.setBackgroundColor(Color.TRANSPARENT)
         closeButtonThumbnail.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 photoList.removeAt(photos.indexOfChild(newThumbnail))
                 photos.removeView(newThumbnail)
-
-                photoList.forEach {
-                    Log.i(TAG, "onActivityResult: photoList : ${it}")
-                }
             }
         })
         newThumbnail.addView(closeButtonThumbnail)
         photos.addView(newThumbnail)
 
-        photoList.forEach {
-            Log.i(TAG, "onActivityResult: photoList : ${it}")
-        }
         // Show the picture fullscreen on user touch
         newThumbnail.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                // Getting the right thumbnail to draw fullscreen
-                val indexOfThumbnailInPhotoList = photos.indexOfChild(v)
-                inputStream = v?.context?.contentResolver?.openInputStream(Uri.parse(photoList[indexOfThumbnailInPhotoList].uri))
-
-                // Creating the layout
-                var fullscreenPicture: RelativeLayout = RelativeLayout(v?.context)
-                fullscreenPicture.background = BitmapDrawable(resources, inputStream)
-                fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
-                // Creating the fullscreen close button
-                var closeButtonFullscreen: ImageButton = ImageButton(v?.context)
-                var layoutParamsForCloseButton2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(80, 80)
-                layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_END)
-                layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-                layoutParamsForCloseButton2.setMargins(16, 16, 16, 16)
-                closeButtonFullscreen.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
-                closeButtonFullscreen.layoutParams = layoutParamsForCloseButton2
-                // Creating the editText, for receiving user content
-                var userFullscreenDescription: EditText = EditText(v?.context)
-                userFullscreenDescription.inputType = InputType.TYPE_CLASS_TEXT
-                var layoutParamsForFullscreenDescription = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                layoutParamsForFullscreenDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                userFullscreenDescription.layoutParams = layoutParamsForFullscreenDescription
-                userFullscreenDescription.setTextColor(Color.WHITE)
-                // Adding childs to the new fullscreen layout
-                fullscreenPicture.addView(userFullscreenDescription)
-                fullscreenPicture.addView(closeButtonFullscreen)
-                // Retrieving description, if there is one
-                if (newThumbnail.childCount >= 2) {
-                    var retrievedDescription: TextView = newThumbnail.getChildAt(1) as TextView
-                    userFullscreenDescription.setText(retrievedDescription.text)
-                    newThumbnail.removeViewAt(1)
-                }
-                // Then adding it to a dialog window
-                var dialogWindow: Dialog? = v?.context?.let { Dialog(it, android.R.style.Theme_NoTitleBar_Fullscreen) }
-                dialogWindow?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialogWindow?.setContentView(fullscreenPicture)
-                dialogWindow?.show()
-                closeButtonFullscreen.setOnClickListener(object : View.OnClickListener {
-                    override fun onClick(v: View?) {
-                        if (userFullscreenDescription.text.isNotEmpty()) {
-                            // Setting params for description
-                            var layoutParamsForThumbnailDescription =
-                                    RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                            layoutParamsForThumbnailDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                            layoutParamsForThumbnailDescription.addRule(RelativeLayout.CENTER_HORIZONTAL)
-                            layoutParamsForThumbnailDescription.setMargins(16, 16, 16, 16)
-                            var description: TextView = TextView(v?.context)
-                            description.layoutParams = layoutParamsForThumbnailDescription
-                            description.text = userFullscreenDescription.text
-                            var shade = ResourcesCompat.getDrawable(resources,R.drawable.thumbnail_shade50, null)
-                            shade?.alpha = 100
-                            description.background = shade
-                            description.setTextColor(Color.WHITE)
-                            // Adding to the corresponding thumbnail
-                            newThumbnail.addView(description)
-                            // Updating the photoList accordingly
-                            photoList.set(
-                                    indexOfThumbnailInPhotoList,
-                                    EstatePhoto(photoList[indexOfThumbnailInPhotoList].uri,
-                                            description.text.toString()))
-
-                            photoList.forEach {
-                                Log.i(TAG, "onActivityResult: photoList : ${it}")
-                            }
-                        }
-                        dialogWindow?.dismiss()
-                    }
-                })
+                showPhotoFullscreen(v)
             }
         })
+    }
+
+    private fun showPhotoFullscreen(v: View?){
+
+        // Getting the right thumbnail to draw fullscreen
+        val indexOfThumbnailInPhotoList = photos.indexOfChild(v)
+        val inputStreamFromUri = contentResolver.openInputStream(Uri.parse(photoList[indexOfThumbnailInPhotoList].uri))
+
+        // Creating the layout
+        var fullscreenPicture: RelativeLayout = RelativeLayout(v?.context)
+        fullscreenPicture.background = BitmapDrawable(resources, inputStreamFromUri)
+        fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
+        // Creating the fullscreen close button
+        var closeButtonFullscreen: ImageButton = ImageButton(v?.context)
+        var layoutParamsForCloseButton2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
+                resources.getDimension(R.dimen.fullscreen_close_button_width).toInt(),
+                resources.getDimension(R.dimen.fullscreen_close_button_height).toInt())
+        layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_END)
+        layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+        layoutParamsForCloseButton2.setMargins(16, 16, 16, 16)
+        closeButtonFullscreen.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
+        closeButtonFullscreen.layoutParams = layoutParamsForCloseButton2
+        closeButtonFullscreen.setBackgroundColor(Color.TRANSPARENT)
+        // Creating the editText, for receiving user content
+        var userFullscreenDescription: EditText = EditText(v?.context)
+        userFullscreenDescription.inputType = InputType.TYPE_CLASS_TEXT
+        var layoutParamsForFullscreenDescription = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+        layoutParamsForFullscreenDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        userFullscreenDescription.layoutParams = layoutParamsForFullscreenDescription
+        userFullscreenDescription.setTextColor(Color.WHITE)
+        // Adding childs to the new fullscreen layout
+        fullscreenPicture.addView(userFullscreenDescription)
+        fullscreenPicture.addView(closeButtonFullscreen)
+        // Retrieving description, if there is one
+        var thumbnail = photos.getChildAt(indexOfThumbnailInPhotoList) as RelativeLayout
+        if (thumbnail.childCount >= 2) {
+            var retrievedDescription: TextView = thumbnail.getChildAt(1) as TextView
+            userFullscreenDescription.setText(retrievedDescription.text)
+            thumbnail.removeViewAt(1)
+        }
+        // Then adding it to a dialog window
+        var dialogWindow: Dialog? = v?.context?.let { Dialog(it, android.R.style.Theme_NoTitleBar_Fullscreen) }
+        dialogWindow?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialogWindow?.setContentView(fullscreenPicture)
+        dialogWindow?.show()
+        closeButtonFullscreen.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                if (userFullscreenDescription.text.isNotEmpty()) {
+                    // Setting params for description
+                    var description = createNewTextViewWithDescription(v?.context,userFullscreenDescription.text.toString())
+                    // Adding to the corresponding thumbnail
+                    thumbnail.addView(description)
+                    // Updating the photoList accordingly
+                    photoList.set(
+                            indexOfThumbnailInPhotoList,
+                            EstatePhoto(photoList[indexOfThumbnailInPhotoList].uri,
+                                    description.text.toString()))
+
+                    photoList.forEach {
+                        Log.i(TAG, "onActivityResult: photoList : ${it}")
+                    }
+                }
+                dialogWindow?.dismiss()
+            }
+        })
+    }
+
+    private fun createNewTextViewWithDescription(context : Context?, descriptionRetrieved : String) : TextView{
+        var layoutParamsForThumbnailDescription =
+                RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+        layoutParamsForThumbnailDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        layoutParamsForThumbnailDescription.addRule(RelativeLayout.CENTER_HORIZONTAL)
+        layoutParamsForThumbnailDescription.setMargins(16, 16, 16, 16)
+        var description: TextView = TextView(context)
+        description.layoutParams = layoutParamsForThumbnailDescription
+        description.text = descriptionRetrieved
+        var shade = ResourcesCompat.getDrawable(resources,R.drawable.thumbnail_shade50, null)
+        description.background = shade
+        description.setTextColor(Color.WHITE)
+
+        return description
     }
 
     private fun turnPhotoTheRightWay(inputStream: InputStream?): Matrix {

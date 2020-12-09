@@ -40,16 +40,23 @@ class DetailEstateActivity : AppCompatActivity() {
 
         var drawableHalfShade = ContextCompat.getDrawable(this,R.drawable.thumbnail_shade50) as GradientDrawable
         var drawableShade = ContextCompat.getDrawable(this,R.drawable.thumbnail_shade80) as GradientDrawable
-        drawableHalfShade.setSize(150,150)
-        drawableShade.setSize(150,150)
+        drawableHalfShade.setSize(
+                resources.getDimension(R.dimen.thumbnail_width).toInt(),
+                resources.getDimension(R.dimen.shade_height).toInt())
+        drawableShade.setSize(
+                resources.getDimension(R.dimen.thumbnail_width).toInt(),
+                resources.getDimension(R.dimen.shade_height).toInt())
         lateinit var backgroundWithShade : LayerDrawable
 
             estateSelected = idOfEstateSelected?.let { detailViewModel.getEstateById(it) }
             estateSelected?.photosUriWithDescriptions?.forEach {
                 // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
                 var newThumbnail = TextView(this)
-                newThumbnail.layoutParams = RelativeLayout.LayoutParams(400, 400)
+                newThumbnail.layoutParams = RelativeLayout.LayoutParams(
+                        resources.getDimension(R.dimen.thumbnail_width).toInt(),
+                        resources.getDimension(R.dimen.thumbnail_height).toInt())
                 newThumbnail.gravity = Gravity.BOTTOM
+                newThumbnail.setTextColor(Color.WHITE)
                 var uriPhoto = Uri.parse(it?.uri)
                 lateinit var drawable : Drawable
                 Glide.with(this)
@@ -66,10 +73,19 @@ class DetailEstateActivity : AppCompatActivity() {
                         })
                 newThumbnail.setOnClickListener(object : View.OnClickListener{
                     override fun onClick(v: View?) {
-                        backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableShade))
-                        backgroundWithShade.setLayerGravity(1,Gravity.BOTTOM)
+                        if (newThumbnail.textColors.defaultColor == Color.WHITE) {
+                            backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableShade))
+                            backgroundWithShade.setLayerGravity(1,Gravity.BOTTOM)
+
+                            newThumbnail.setTextColor(Color.YELLOW)
+                        }
+                        else{
+                            backgroundWithShade = LayerDrawable(arrayOf(drawable, drawableHalfShade))
+                            backgroundWithShade.setLayerGravity(1,Gravity.BOTTOM)
+
+                            newThumbnail.setTextColor(Color.WHITE)
+                        }
                         newThumbnail.background = backgroundWithShade
-                        newThumbnail.setTextColor(Color.YELLOW)
                     }
                 })
 
