@@ -302,6 +302,8 @@ class CreateEstateActivity : AppCompatActivity()  {
                     poiList.add(it.name.toLowerCase())
                 }
 
+                // Todo : search for lat and lng, if phone is connected to internet
+
                 var newEstate = Estate(
                         spinner_selection,
                         slider_price_value,

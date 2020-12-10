@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.FragmentTransaction
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
 import com.openclassrooms.realestatemanager.modules.mainModule
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
     enum class Activities {
-        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, SEARCH_ACTIVITY, CREATE_ESTATE_ACTIVITY, DETAIL_ACTIVITY
+        NO_PREVIOUS_ACTIVITY,LOAN_ACTIVITY, SEARCH_ACTIVITY, CREATE_ESTATE_ACTIVITY, MAP_ACTIVITY
     }
 
     lateinit var previousActivityWas : Activities
@@ -58,7 +59,12 @@ class MainActivity : AppCompatActivity() {
                 main_activity_motionLayout.setTransition(R.id.create_estate_click_transition)
                 main_activity_motionLayout.transitionToStart()
             }
+            Activities.MAP_ACTIVITY -> {
+                main_activity_motionLayout.setTransition(R.id.map_click_transition)
+                main_activity_motionLayout.transitionToStart()
+            }
         }
+        // Saving the name of the activity when we came from
         main_activity_motionLayout?.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
                 if (p1 == R.id.loan_click_end){
@@ -72,6 +78,10 @@ class MainActivity : AppCompatActivity() {
                 if (p1 == R.id.create_estate_click_end){
                     previousActivityWas = Activities.CREATE_ESTATE_ACTIVITY
                     startActivity(Intent(this@MainActivity, CreateEstateActivity::class.java))
+                }
+                if (p1 == R.id.map_click_end){
+                    previousActivityWas = Activities.MAP_ACTIVITY
+                    startActivity(Intent(this@MainActivity, MapEstateActivity::class.java))
                 }
             }
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) { }

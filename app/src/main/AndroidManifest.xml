@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <!-- features used by the application -->
@@ -24,6 +26,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MaterialTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${mapsApiKey}" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -52,6 +57,10 @@
         <activity android:name="com.openclassrooms.realestatemanager.activities.DetailEstateActivity"
             android:parentActivityName=".activities.MainActivity">
         </activity>
+        <activity android:name="com.openclassrooms.realestatemanager.activities.MapEstateActivity"
+            android:parentActivityName=".activities.MainActivity">
+        </activity>
+
     </application>
 
 </manifest>
