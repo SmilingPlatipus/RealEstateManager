@@ -80,7 +80,11 @@ class LoanActivity : AppCompatActivity() {
         buttonCalculate.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
                 if (interest_rate_value != null)
-                    monthly_payment_amount.text = calculateMonthlyPayment(slider_amount_value.toLong(),slider_period_value.toInt(), interest_rate_value!!) +
+                    monthly_payment_amount.text =
+                            calculateMonthlyPayment(
+                                    slider_amount_value.toLong(),
+                                    slider_period_value.toInt(),
+                                    interest_rate_value!!) +
                             getString(R.string.currency_per_month)
                 else
                     Toast.makeText(v?.context,"You need to enter an interest rate to be able to calculate",Toast.LENGTH_LONG).show()
@@ -90,7 +94,7 @@ class LoanActivity : AppCompatActivity() {
             override fun onClick(v: View?) {
                 slider_amount.value = 0F
                 slider_period.value = 3F
-                monthly_payment_amount.clearComposingText()
+                monthly_payment_amount.text = ""
                 interest_rate_value = null
                 interest_rate_editText.text = null
             }

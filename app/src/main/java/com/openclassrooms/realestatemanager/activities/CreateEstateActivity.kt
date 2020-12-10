@@ -18,7 +18,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.*
@@ -28,9 +27,6 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.slider.Slider
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
@@ -158,6 +154,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                 var photoBitmap = MediaStore.Images.Media.getBitmap(contentResolver,uriPhoto)
                 photoBitmap = Bitmap.createBitmap(photoBitmap, 0, 0, photoBitmap.width, photoBitmap.height, matrix, true)
                 addNewThumbnailToPhotoList(uriPhoto, photoBitmap)
+                photoList.add(it)
             }
         }
 
@@ -440,12 +437,10 @@ class CreateEstateActivity : AppCompatActivity()  {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK)
         {
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.create_estate_getPhoto_error), Toast.LENGTH_SHORT).show()
             return
         }
 
-        val uri: Uri = uriPhoto
-        var inputStream = uri?.let { contentResolver.openInputStream(it) }!!
         when (requestCode)
         {
             // This is the photo taken by the user (saved in the gallery for testing purposes)
@@ -457,16 +452,19 @@ class CreateEstateActivity : AppCompatActivity()  {
             }
             // This is the photo taken from gallery, rotated in the right side
             LOAD_IMG_REQUEST -> {
-                photo = BitmapFactory.decodeStream(data?.data?.let { contentResolver.openInputStream(it) })
+                uriPhoto = data?.data!!
+                photo = BitmapFactory.decodeStream(contentResolver.openInputStream(uriPhoto))
                 outputFile = createNewJpegFile()
+
             }
         }
 
+        var inputStream = uriPhoto?.let { contentResolver.openInputStream(it) }!!
         val matrix = turnPhotoTheRightWay(inputStream)
         photo = Bitmap.createBitmap(photo, 0, 0, photo.width, photo.height, matrix, true)
         // Saving selected image into the external directory of the app
         uriPhoto = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", outputFile)
-        savePhotoToTelephone(this, photo, uriPhoto)
+        savePhotoToTelephone(this, photo, outputFile)
         // Adding photo uri to the list to be saved
         photoList.add(EstatePhoto(uriPhoto.toString()))
 
@@ -474,7 +472,6 @@ class CreateEstateActivity : AppCompatActivity()  {
     }
 
     private fun addNewThumbnailToPhotoList(uri : Uri,bitmap: Bitmap) {
-        photoList.add(EstatePhoto(uri.toString()))
         // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
         val newThumbnail = RelativeLayout(this)
         newThumbnail.background = BitmapDrawable(resources, bitmap)
@@ -488,7 +485,6 @@ class CreateEstateActivity : AppCompatActivity()  {
                 resources.getDimension(R.dimen.thumbnail_close_button_height).toInt())
         layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_END)
         layoutParamsForCloseButton.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-        layoutParamsForCloseButton.setMargins(16, 16, 16, 16)
         closeButtonThumbnail.layoutParams = layoutParamsForCloseButton
         closeButtonThumbnail.setBackgroundColor(Color.TRANSPARENT)
         closeButtonThumbnail.setOnClickListener(object : View.OnClickListener {
@@ -520,14 +516,18 @@ class CreateEstateActivity : AppCompatActivity()  {
         fullscreenPicture.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
         // Creating the fullscreen close button
         var closeButtonFullscreen: ImageButton = ImageButton(v?.context)
-        var layoutParamsForCloseButton2 : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
+        var layoutParamsForFullscreenCloseButton : RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
                 resources.getDimension(R.dimen.fullscreen_close_button_width).toInt(),
                 resources.getDimension(R.dimen.fullscreen_close_button_height).toInt())
-        layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_END)
-        layoutParamsForCloseButton2.addRule(RelativeLayout.ALIGN_PARENT_TOP)
-        layoutParamsForCloseButton2.setMargins(16, 16, 16, 16)
+        layoutParamsForFullscreenCloseButton.addRule(RelativeLayout.ALIGN_PARENT_END)
+        layoutParamsForFullscreenCloseButton.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+        layoutParamsForFullscreenCloseButton.setMargins(
+                resources.getDimension(R.dimen.fullscreen_close_button_margin).toInt(),
+                resources.getDimension(R.dimen.fullscreen_close_button_margin).toInt(),
+                resources.getDimension(R.dimen.fullscreen_close_button_margin).toInt(),
+                resources.getDimension(R.dimen.fullscreen_close_button_margin).toInt())
         closeButtonFullscreen.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_close_24, null))
-        closeButtonFullscreen.layoutParams = layoutParamsForCloseButton2
+        closeButtonFullscreen.layoutParams = layoutParamsForFullscreenCloseButton
         closeButtonFullscreen.setBackgroundColor(Color.TRANSPARENT)
         // Creating the editText, for receiving user content
         var userFullscreenDescription: EditText = EditText(v?.context)
@@ -578,7 +578,12 @@ class CreateEstateActivity : AppCompatActivity()  {
                 RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         layoutParamsForThumbnailDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
         layoutParamsForThumbnailDescription.addRule(RelativeLayout.CENTER_HORIZONTAL)
-        layoutParamsForThumbnailDescription.setMargins(16, 16, 16, 16)
+        layoutParamsForThumbnailDescription.setMargins(
+                resources.getDimension(R.dimen.thumbnail_description_margin).toInt(),
+                resources.getDimension(R.dimen.thumbnail_description_margin).toInt(),
+                resources.getDimension(R.dimen.thumbnail_description_margin).toInt(),
+                resources.getDimension(R.dimen.thumbnail_description_margin).toInt())
+
         var description: TextView = TextView(context)
         description.layoutParams = layoutParamsForThumbnailDescription
         description.text = descriptionRetrieved
@@ -603,9 +608,9 @@ class CreateEstateActivity : AppCompatActivity()  {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun savePhotoToTelephone(context: Context, photoToSave: Bitmap, uriPhoto: Uri) {
+    private fun savePhotoToTelephone(context: Context, photoToSave: Bitmap, outputFile : File) {
 
-        var values : ContentValues = ContentValues()
+        var values = ContentValues()
         values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         values.put(MediaStore.MediaColumns.IS_PENDING, true)
 
