@@ -24,9 +24,8 @@ data class Estate (
         var status :String?,
         @TypeConverters(OffsetDateTimeConverter::class)
         var creationDate :OffsetDateTime?,
-        @TypeConverters(OffsetDateTimeConverter::class)
-        var saleDate :OffsetDateTime?,
-        var dealer :String?,
+        var saleDate :String?,
+        var saler :String?,
         var latitude :Double?,
         var longitude :Double?
 ){

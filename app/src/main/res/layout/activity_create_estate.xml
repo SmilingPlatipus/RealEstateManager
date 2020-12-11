@@ -203,6 +203,13 @@
                     android:text="@string/checkbox_nearbyServices_school"
                     app:layout_constraintTop_toBottomOf="@id/create_estate_checkBox_park"
                     app:layout_constraintStart_toStartOf="@id/create_estate_checkBox_park"/>
+                <Button
+                    android:id="@+id/buttonSold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/create_estate_checkBox_school"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="@string/create_estate_button_sold" />
                 <TextView
                     android:id="@+id/price"
                     android:layout_width="wrap_content"

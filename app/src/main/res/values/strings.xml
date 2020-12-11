@@ -80,5 +80,6 @@
     <string name="standard_drawable_uri">android.resource://com.openclassrooms.realestatemanager/drawable/</string>
     <string name="emptyText_recyclerView">There is no real estate corresponding to your criterias</string>
     <string name="create_estate_getPhoto_error">Something went wrong while retrieving your photo</string>
+    <string name="create_estate_button_sold">Is this\nreal estate\nsold ?</string>
 
 </resources>

@@ -2,14 +2,19 @@ package com.openclassrooms.realestatemanager.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.*
-import android.graphics.drawable.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.drawable.BitmapDrawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -28,20 +33,23 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.slider.Slider
+import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.model.EstatePhoto
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_create_estate.*
-import com.openclassrooms.realestatemanager.BuildConfig
-import kotlinx.android.synthetic.main.activity_create_estate.top_image
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.util.*
 import kotlin.math.roundToInt
+
 
 class CreateEstateActivity : AppCompatActivity()  {
     val TAG: String = "CreateEstateActivity"
@@ -50,6 +58,8 @@ class CreateEstateActivity : AppCompatActivity()  {
     var slider_price_value : Float? = null
     var slider_rooms_value : Float? = null
     var slider_size_value : Float? = null
+    var dateOfSale : String? = null
+    var estateStatus : EstateStatus? = null
     var checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
     val estateViewModel by viewModel<EstateViewModel>()
 
@@ -65,6 +75,11 @@ class CreateEstateActivity : AppCompatActivity()  {
         SCHOOL
     }
 
+    enum class EstateStatus{
+        FORSALE,
+        SOLD
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_estate)
@@ -78,7 +93,9 @@ class CreateEstateActivity : AppCompatActivity()  {
 
         estateSelected = idOfEstateSelected?.let { estateViewModel.getEstateById(it) }
 
-        // If bundle is not null, it's an estate creation. If not, values are retrieved from database and views initialized.
+        /** If bundle is not null, it's an estate creation.
+         * If not, values are retrieved from database and views initialized.
+         */
 
         if (bundle == null) {
             top_image.text = getString(R.string.create_estate_title_create)
@@ -86,6 +103,11 @@ class CreateEstateActivity : AppCompatActivity()  {
             slider_rooms_value = create_estate_Slider_rooms.value
             slider_size_value = create_estate_Slider_size.value
         }
+
+        /** This part is for Estate Update.
+         * All data is retrieved and Views updated accordingly.
+         */
+
         else {
             // Changing title of the page
             top_image.text = getString(R.string.create_estate_title_update)
@@ -151,11 +173,13 @@ class CreateEstateActivity : AppCompatActivity()  {
                 var uriPhoto = Uri.parse(it?.uri)
                 var inputStream = contentResolver.openInputStream(uriPhoto)
                 val matrix = turnPhotoTheRightWay(inputStream)
-                var photoBitmap = MediaStore.Images.Media.getBitmap(contentResolver,uriPhoto)
+                var photoBitmap = MediaStore.Images.Media.getBitmap(contentResolver, uriPhoto)
                 photoBitmap = Bitmap.createBitmap(photoBitmap, 0, 0, photoBitmap.width, photoBitmap.height, matrix, true)
                 addNewThumbnailToPhotoList(uriPhoto, photoBitmap)
                 photoList.add(it)
             }
+
+
         }
 
         create_estate_spinner_typeOfEstate.adapter = ArrayAdapter(this, R.layout.create_estate_spinner_row, estateTypes)
@@ -233,6 +257,32 @@ class CreateEstateActivity : AppCompatActivity()  {
 
         create_estate_checkBox_all.setOnCheckedChangeListener { p0, p1 -> checkAllCheckboxes(p1) }
 
+        val dateSetListener = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            dateOfSale = String()
+            dateOfSale = "$year-${monthOfYear+1}-${dayOfMonth}T12:00Z"
+            estateStatus = EstateStatus.SOLD
+            Toast.makeText(this,"This real estate has been sold $year/${monthOfYear+1}/${dayOfMonth}",Toast.LENGTH_LONG).show()
+        }
+
+        buttonSold.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                var selectedYear = OffsetDateTime.now().year
+                var selectedMonth = OffsetDateTime.now().monthValue - 1
+                var selectedDayOfMonth = OffsetDateTime.now().dayOfMonth
+
+                val datePickerDialog = v?.context?.let {
+                    DatePickerDialog(
+                            it,
+                            dateSetListener,
+                            selectedYear,
+                            selectedMonth,
+                            selectedDayOfMonth)
+                }
+
+                datePickerDialog?.show()
+            }
+        })
+
         buttonCreate.setOnClickListener(object : View.OnClickListener {
             override fun onClick(p0: View?) {
                 // checking hospital checkbox
@@ -297,38 +347,38 @@ class CreateEstateActivity : AppCompatActivity()  {
                 photoList.forEach {
                     Log.i(TAG, "onClick: photoList : ${it}")
                 }
-                var poiList : MutableList<String> = emptyList<String>().toMutableList()
+                var poiList: MutableList<String> = emptyList<String>().toMutableList()
                 checkboxesStatus.forEach {
                     poiList.add(it.name.toLowerCase())
                 }
 
                 // Todo : search for lat and lng, if phone is connected to internet
 
+
                 var newEstate = Estate(
-                        spinner_selection,
-                        slider_price_value,
-                        slider_size_value,
-                        slider_rooms_value?.roundToInt(),
-                        editText_description_of_estate.text.toString(),
-                        photoList,
-                        listOf(
+                        type = spinner_selection,
+                        price = slider_price_value,
+                        size = slider_size_value,
+                        rooms = slider_rooms_value?.roundToInt(),
+                        description = editText_description_of_estate.text.toString(),
+                        photosUriWithDescriptions = photoList,
+                        address = listOf(
                                 editText_address_of_estate_number.text.toString(),
                                 editText_address_of_estate_street.text.toString(),
                                 editText_address_of_estate_postalCode.text.toString(),
                                 editText_address_of_estate_city.text.toString()),
-                        poiList,
-                        SearchActivity.SearchStatus.FORSALE.name.toLowerCase(),
-                        OffsetDateTime.now(),
-                        null,
-                        "Jean Michel",
-                        null,
-                        null)
+                        poi = poiList,
+                        status = estateStatus?.name?.toLowerCase(),
+                        creationDate = OffsetDateTime.now(),
+                        saleDate = dateOfSale,
+                        saler = "Jean Michel",
+                        latitude = null,
+                        longitude = null)
 
                 if (idOfEstateSelected == null) {
                     estateViewModel.insert(newEstate)
                     Toast.makeText(p0?.context, getString(R.string.create_estate_creation), Toast.LENGTH_LONG).show()
-                }
-                else{
+                } else {
                     newEstate.id = estateSelected?.id!!
                     estateViewModel.update(newEstate)
                     Toast.makeText(p0?.context, getString(R.string.create_estate_update), Toast.LENGTH_LONG).show()
@@ -342,7 +392,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                 val alertDialog = AlertDialog.Builder(p0?.context)
                 alertDialog.setTitle(p0?.context?.getString(R.string.create_estate_alert_dialog_title))
                 alertDialog.setMessage(p0?.context?.getString(R.string.create_estate_alert_dialog_message))
-                alertDialog.setPositiveButton(p0?.context?.getString(R.string.create_estate_alert_dialog_yes),object : DialogInterface.OnClickListener{
+                alertDialog.setPositiveButton(p0?.context?.getString(R.string.create_estate_alert_dialog_yes), object : DialogInterface.OnClickListener {
                     override fun onClick(p0: DialogInterface?, p1: Int) {
                         editText_address_of_estate_number.text.clear()
                         editText_address_of_estate_street.text.clear()
@@ -358,7 +408,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                         photoList.clear()
                     }
                 })
-                alertDialog.setNegativeButton(p0?.context?.getString(R.string.create_estate_alert_dialog_no),object : DialogInterface.OnClickListener{
+                alertDialog.setNegativeButton(p0?.context?.getString(R.string.create_estate_alert_dialog_no), object : DialogInterface.OnClickListener {
                     override fun onClick(p0: DialogInterface?, p1: Int) {
 
                     }
@@ -473,7 +523,7 @@ class CreateEstateActivity : AppCompatActivity()  {
         addNewThumbnailToPhotoList(uriPhoto, photo)
     }
 
-    private fun addNewThumbnailToPhotoList(uri : Uri,bitmap: Bitmap) {
+    private fun addNewThumbnailToPhotoList(uri: Uri, bitmap: Bitmap) {
         // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
         val newThumbnail = RelativeLayout(this)
         newThumbnail.background = BitmapDrawable(resources, bitmap)
@@ -557,7 +607,7 @@ class CreateEstateActivity : AppCompatActivity()  {
             override fun onClick(v: View?) {
                 if (userFullscreenDescription.text.isNotEmpty()) {
                     // Setting params for description
-                    var description = createNewTextViewWithDescription(v?.context,userFullscreenDescription.text.toString())
+                    var description = createNewTextViewWithDescription(v?.context, userFullscreenDescription.text.toString())
                     // Adding to the corresponding thumbnail
                     thumbnail.addView(description)
                     // Updating the photoList accordingly
@@ -575,7 +625,7 @@ class CreateEstateActivity : AppCompatActivity()  {
         })
     }
 
-    private fun createNewTextViewWithDescription(context : Context?, descriptionRetrieved : String) : TextView{
+    private fun createNewTextViewWithDescription(context: Context?, descriptionRetrieved: String) : TextView{
         var layoutParamsForThumbnailDescription =
                 RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         layoutParamsForThumbnailDescription.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
@@ -589,7 +639,7 @@ class CreateEstateActivity : AppCompatActivity()  {
         var description: TextView = TextView(context)
         description.layoutParams = layoutParamsForThumbnailDescription
         description.text = descriptionRetrieved
-        var shade = ResourcesCompat.getDrawable(resources,R.drawable.thumbnail_shade50, null)
+        var shade = ResourcesCompat.getDrawable(resources, R.drawable.thumbnail_shade50, null)
         description.background = shade
         description.setTextColor(Color.WHITE)
 
@@ -610,7 +660,7 @@ class CreateEstateActivity : AppCompatActivity()  {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun savePhotoToTelephone(context: Context, photoToSave: Bitmap, outputFile : File) {
+    private fun savePhotoToTelephone(context: Context, photoToSave: Bitmap, outputFile: File) {
 
         var values = ContentValues()
         values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
@@ -621,7 +671,7 @@ class CreateEstateActivity : AppCompatActivity()  {
         if (uri != null)
         {
             var outputStream = ByteArrayOutputStream()
-            photoToSave.compress(Bitmap.CompressFormat.JPEG, 100,outputStream)
+            photoToSave.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             var photoData : ByteArray = outputStream.toByteArray()
 
             var fileOutputStream = FileOutputStream(outputFile)

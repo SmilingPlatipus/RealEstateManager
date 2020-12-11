@@ -1,7 +1,5 @@
 package com.openclassrooms.realestatemanager.utils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.room.TypeConverter
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
