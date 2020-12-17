@@ -100,6 +100,7 @@ val mainModule = module {
                         contentValues.put("longitude", 1.436512)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+
                         photoList.clear()
 
                         address = listOf("292","Rue Joachim Murat","46000","Cahors")
@@ -126,6 +127,7 @@ val mainModule = module {
                         contentValues.put("longitude", 1.435320)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+
                         photoList.clear()
 
                         address = listOf("50","Avenue Edouard Herriot","46000","Cahors")
@@ -227,6 +229,8 @@ val mainModule = module {
                         contentValues.put("longitude", 1.436329)
 
                         db.insert("Estate",OnConflictStrategy.IGNORE,contentValues)
+
+
 
 
                     }

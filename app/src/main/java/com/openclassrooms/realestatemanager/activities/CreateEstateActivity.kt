@@ -32,14 +32,23 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.slider.Slider
 import com.openclassrooms.realestatemanager.BuildConfig
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.model.EstatePhoto
+import com.openclassrooms.realestatemanager.model.GeocodingResponse
+import com.openclassrooms.realestatemanager.utils.GeocodingService
+import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_create_estate.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -59,7 +68,7 @@ class CreateEstateActivity : AppCompatActivity()  {
     var slider_rooms_value : Float? = null
     var slider_size_value : Float? = null
     var dateOfSale : String? = null
-    var estateStatus : EstateStatus? = null
+    var estateStatus = EstateStatus.FORSALE
     var checkboxesStatus = EnumSet.noneOf(NearbyServices::class.java)
     val estateViewModel by viewModel<EstateViewModel>()
 
@@ -351,39 +360,104 @@ class CreateEstateActivity : AppCompatActivity()  {
                 checkboxesStatus.forEach {
                     poiList.add(it.name.toLowerCase())
                 }
+                val address: List<String> = listOf(
+                        editText_address_of_estate_number.text.toString(),
+                        editText_address_of_estate_street.text.toString(),
+                        editText_address_of_estate_postalCode.text.toString(),
+                        editText_address_of_estate_city.text.toString())
 
-                // Todo : search for lat and lng, if phone is connected to internet
+                var estateCoordinates : LatLng? = null
+
+                if (Utils.isInternetAvailable(p0?.context)) {
+                    val geocodingService: GeocodingService = Retrofit.Builder()
+                            .baseUrl(GeocodingService.BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+                            .create(GeocodingService::class.java)
+
+                    var formattedAddress = StringBuilder()
+                    formattedAddress.append(address[0] + "%20" + address[1])
+                    formattedAddress.append("," + address[2] + "%20" + address[3])
+
+                    Log.i(TAG, "formattedAddress value : $formattedAddress")
 
 
-                var newEstate = Estate(
-                        type = spinner_selection,
-                        price = slider_price_value,
-                        size = slider_size_value,
-                        rooms = slider_rooms_value?.roundToInt(),
-                        description = editText_description_of_estate.text.toString(),
-                        photosUriWithDescriptions = photoList,
-                        address = listOf(
-                                editText_address_of_estate_number.text.toString(),
-                                editText_address_of_estate_street.text.toString(),
-                                editText_address_of_estate_postalCode.text.toString(),
-                                editText_address_of_estate_city.text.toString()),
-                        poi = poiList,
-                        status = estateStatus?.name?.toLowerCase(),
-                        creationDate = OffsetDateTime.now(),
-                        saleDate = dateOfSale,
-                        saler = "Jean Michel",
-                        latitude = null,
-                        longitude = null)
+                    geocodingService
+                            .getLatLngFromAddress(formattedAddress.toString(), BuildConfig.ApiKey)
+                            .enqueue(object : Callback<GeocodingResponse> {
+                                override fun onResponse(call: Call<GeocodingResponse>, response: Response<GeocodingResponse>) {
+                                    var lat : Double?
+                                    var lng : Double?
+                                    var responseFromRequest = response.body()
+                                    var firstResult = responseFromRequest?.results?.get(0)
+                                    lat = firstResult?.geometry?.location?.lat
+                                    lng = firstResult?.geometry?.location?.lng
 
-                if (idOfEstateSelected == null) {
-                    estateViewModel.insert(newEstate)
-                    Toast.makeText(p0?.context, getString(R.string.create_estate_creation), Toast.LENGTH_LONG).show()
-                } else {
-                    newEstate.id = estateSelected?.id!!
-                    estateViewModel.update(newEstate)
-                    Toast.makeText(p0?.context, getString(R.string.create_estate_update), Toast.LENGTH_LONG).show()
+                                    if ((lat != null) and (lng != null)) {
+                                        estateCoordinates = LatLng(lat!!, lng!!)
+
+                                        Log.i(TAG, "onResponse: $lat , $lng")
+
+                                        var newEstate = Estate(
+                                                type = spinner_selection,
+                                                price = slider_price_value,
+                                                size = slider_size_value,
+                                                rooms = slider_rooms_value?.roundToInt(),
+                                                description = editText_description_of_estate.text.toString(),
+                                                photosUriWithDescriptions = photoList,
+                                                address = address,
+                                                poi = poiList,
+                                                status = estateStatus?.name?.toLowerCase(),
+                                                creationDate = OffsetDateTime.now(),
+                                                saleDate = dateOfSale,
+                                                saler = "Jean Michel",
+                                                latitude = estateCoordinates?.latitude,
+                                                longitude = estateCoordinates?.longitude)
+
+                                        if (idOfEstateSelected == null) {
+                                            estateViewModel.insert(newEstate)
+                                            Toast.makeText(p0?.context, getString(R.string.create_estate_creation), Toast.LENGTH_LONG).show()
+                                        } else {
+                                            newEstate.id = estateSelected?.id!!
+                                            estateViewModel.update(newEstate)
+                                            Toast.makeText(p0?.context, getString(R.string.create_estate_update), Toast.LENGTH_LONG).show()
+                                        }
+                                        finish()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<GeocodingResponse>, t: Throwable) {
+
+                                }
+                            })
                 }
-                finish()
+                else{
+                    var newEstate = Estate(
+                            type = spinner_selection,
+                            price = slider_price_value,
+                            size = slider_size_value,
+                            rooms = slider_rooms_value?.roundToInt(),
+                            description = editText_description_of_estate.text.toString(),
+                            photosUriWithDescriptions = photoList,
+                            address = address,
+                            poi = poiList,
+                            status = estateStatus?.name?.toLowerCase(),
+                            creationDate = OffsetDateTime.now(),
+                            saleDate = dateOfSale,
+                            saler = "Jean Michel",
+                            latitude = null,
+                            longitude = null)
+
+                    if (idOfEstateSelected == null) {
+                        estateViewModel.insert(newEstate)
+                        Toast.makeText(p0?.context, getString(R.string.create_estate_creation), Toast.LENGTH_LONG).show()
+                    } else {
+                        newEstate.id = estateSelected?.id!!
+                        estateViewModel.update(newEstate)
+                        Toast.makeText(p0?.context, getString(R.string.create_estate_update), Toast.LENGTH_LONG).show()
+                    }
+                    finish()
+                }
             }
         })
 
@@ -444,6 +518,8 @@ class CreateEstateActivity : AppCompatActivity()  {
             }
         })
     }
+
+
 
     private fun createNewJpegFile(): File {
         val timestamp = SimpleDateFormat("ddMMyyyy_").format(Date())
