@@ -195,7 +195,6 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
                     markerOptions.title(estate.address.toString())
                     markerOptions.snippet(estate.id.toString())
                     mMap.addMarker(markerOptions)
-
                 }
             }
 

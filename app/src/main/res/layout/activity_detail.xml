@@ -281,6 +281,12 @@
                         app:icon="@drawable/ic_baseline_edit_24"
                         app:iconPadding="2dp"
                         app:iconTint="#9C27B0" />
+                    <fragment
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/detailMap"
+                        tools:context=".DetailEstateActivity"
+                        android:name="com.google.android.gms.maps.MapFragment"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

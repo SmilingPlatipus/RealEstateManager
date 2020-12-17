@@ -13,20 +13,25 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.activities.MainActivity.Companion.ID_OF_SELECTED_ESTATE
 import com.openclassrooms.realestatemanager.model.Estate
 import com.openclassrooms.realestatemanager.viewModels.DetailViewModel
-import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class DetailEstateActivity : AppCompatActivity() {
+class DetailEstateActivity : AppCompatActivity(), OnMapReadyCallback {
     private val detailViewModel by viewModel<DetailViewModel>()
+    var estateSelected : Estate? = null
+    private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +39,7 @@ class DetailEstateActivity : AppCompatActivity() {
 
         var bundle = intent.extras
         val idOfEstateSelected = bundle?.getLong(ID_OF_SELECTED_ESTATE)
-        var estateSelected : Estate? = null
+
         // This is the Points Of Interests, which are shown on TextView
         var poiText : String? = null
 
@@ -49,6 +54,14 @@ class DetailEstateActivity : AppCompatActivity() {
         lateinit var backgroundWithShade : LayerDrawable
 
             estateSelected = idOfEstateSelected?.let { detailViewModel.getEstateById(it) }
+        if (!estateSelected?.latitude?.isNaN()!! and !estateSelected?.longitude?.isNaN()!!){
+            val options :GoogleMapOptions = GoogleMapOptions().liteMode(true)
+            val mapFragment = MapFragment.newInstance(options)
+            val fragmentTransaction = getFragmentManager().beginTransaction()
+            fragmentTransaction.add(R.id.detailMap,mapFragment)
+            fragmentTransaction.commit()
+            mapFragment.getMapAsync(this)
+        }
             estateSelected?.photosUriWithDescriptions?.forEach {
                 // This is a brand new layout that is built for each photo and added to the linearLayout "photos", who is inside a scrollView
                 var newThumbnail = TextView(this)
@@ -117,9 +130,6 @@ class DetailEstateActivity : AppCompatActivity() {
                     finish()
                 }
             })
-
-        // Todo : geolocation + if data is not null = use lite mode maps android API to show marker on map
-
     }
 
     override fun onBackPressed() {
@@ -129,5 +139,15 @@ class DetailEstateActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "DetailEstateActivity"
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        var markerOptions = MarkerOptions()
+        val lat = estateSelected?.latitude
+        val lng = estateSelected?.longitude
+        markerOptions.position(LatLng(lat!!,lng!!))
+        mMap.addMarker(markerOptions)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat,lng),10.0f))
     }
 }
