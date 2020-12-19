@@ -82,5 +82,6 @@
     <string name="create_estate_getPhoto_error">Something went wrong while retrieving your photo</string>
     <string name="create_estate_button_sold">Is this\nreal estate\nsold ?</string>
     <string name="more_details">See more details</string>
+    <string name="geocoding_bad_address">Please enter a valid address</string>
 
 </resources>

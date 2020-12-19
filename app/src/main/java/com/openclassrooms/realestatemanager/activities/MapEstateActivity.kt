@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.activities
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +19,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -54,7 +57,7 @@ import kotlin.math.roundToInt
 internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var mMap: GoogleMap
-    private lateinit var userLocation: Location
+    var userLocation: Location? = null
 
     val estateViewModel by viewModel<EstateViewModel>()
 
@@ -81,11 +84,8 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.lastLocation
-                .addOnSuccessListener { location : Location? ->
-                    if (location != null) {
+                .addOnSuccessListener { location : Location ->
                         userLocation = location
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation?.let { LatLng(it.latitude, userLocation!!.longitude) }, DEFAULT_ZOOM))
-                    }
                 }
 
         setContentView(R.layout.activity_map)
@@ -111,9 +111,17 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
                 Toast.makeText(this, "Fine location permission is needed by the application", Toast.LENGTH_SHORT).show()
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.setOnMarkerClickListener(this)
+        googleMap.isMyLocationEnabled = true
+
+        googleMap.uiSettings.isMyLocationButtonEnabled = true
+        googleMap.uiSettings.isZoomControlsEnabled = true
+        if (userLocation == null)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(44.447226, 1.438742), DEFAULT_ZOOM))
+        else
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(userLocation!!.latitude, userLocation!!.longitude), DEFAULT_ZOOM))
         // If there is some estates having coordinates to null and if there is an Internet connection, retrieving lat and lng
         estateViewModel.allEstates.observe(this, Observer {
             it.forEach{ estate ->
@@ -131,7 +139,7 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
                                     .create(GeocodingService::class.java)
 
                             var formattedAddress = StringBuilder()
-                            formattedAddress.append(address[0] + "%20" + address[1])
+                            formattedAddress.append(address[0] + "%20" + address[1].replace(" ", "%20"))
                             formattedAddress.append("," + address[2] + "%20" + address[3])
 
                             Log.i("estateViewModel", "formattedAddress value : $formattedAddress")
@@ -144,9 +152,16 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
                                             var lat : Double?
                                             var lng : Double?
                                             var responseFromRequest = response.body()
-                                            var firstResult = responseFromRequest?.results?.get(0)
-                                            lat = firstResult?.geometry?.location?.lat
-                                            lng = firstResult?.geometry?.location?.lng
+                                            if (responseFromRequest?.results?.isEmpty() == true){
+                                                Toast.makeText(applicationContext,getString(R.string.geocoding_bad_address), Toast.LENGTH_LONG).show()
+                                                return
+                                            }
+                                            else{
+                                                var firstResult = responseFromRequest?.results?.get(0)
+
+                                                lat = firstResult?.geometry?.location?.lat
+                                                lng = firstResult?.geometry?.location?.lng
+                                            }
 
                                             if (lat?.isNaN() == false and (lng?.isNaN() == false)) {
                                                 latLng = lng?.let { LatLng(lat, it) }!!

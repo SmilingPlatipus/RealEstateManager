@@ -376,7 +376,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                             .create(GeocodingService::class.java)
 
                     var formattedAddress = StringBuilder()
-                    formattedAddress.append(address[0] + "%20" + address[1])
+                    formattedAddress.append(address[0] + "%20" + address[1].replace(" ", "%20"))
                     formattedAddress.append("," + address[2] + "%20" + address[3])
 
                     Log.i(TAG, "formattedAddress value : $formattedAddress")
@@ -389,14 +389,21 @@ class CreateEstateActivity : AppCompatActivity()  {
                                     var lat : Double?
                                     var lng : Double?
                                     var responseFromRequest = response.body()
-                                    var firstResult = responseFromRequest?.results?.get(0)
-                                    lat = firstResult?.geometry?.location?.lat
-                                    lng = firstResult?.geometry?.location?.lng
+                                    if (responseFromRequest?.results?.isEmpty() == true){
+                                        Toast.makeText(applicationContext,getString(R.string.geocoding_bad_address), Toast.LENGTH_LONG).show()
+                                        return
+                                    }
+                                    else{
+                                        var firstResult = responseFromRequest?.results?.get(0)
+
+                                        lat = firstResult?.geometry?.location?.lat
+                                        lng = firstResult?.geometry?.location?.lng
+                                        Log.i(TAG, "onResponse: $lat , $lng")
+                                    }
 
                                     if ((lat != null) and (lng != null)) {
                                         estateCoordinates = LatLng(lat!!, lng!!)
 
-                                        Log.i(TAG, "onResponse: $lat , $lng")
 
                                         var newEstate = Estate(
                                                 type = spinner_selection,
