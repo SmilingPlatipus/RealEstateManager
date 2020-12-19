@@ -30,9 +30,13 @@ Project is created with:
 - [X] :thumbsup:Main menu with animated buttons
 - [X] :thumbsup:Loan simulator
 - [X] :thumbsup:Screen for creating a new real estate, including taking photo/importing from gallery. Photos are saved on your phone.
+- [X] :thumbsup:Screen for updating/consulting real estate details
+- [X] :thumbsup:Screen for map
+- [X] :thumbsup:Geocoding features
+- [X] :thumbsup:Screen for searching a real estate inside the SQLite database
 
 ## ToDo
 
-- [X] :pushpin:Screen for searching a real estate inside the SQLite database (need to implement Raw Query)
-- [ ] :pushpin:Screen for map
-- [X] :pushpin:Screen for updating/consulting real estate details
+- [ ] :pushpin:ContentProvider
+- [ ] :pushpin:Tablet custom support
+- [ ] :pushpin:Connection tests/Provider tests
