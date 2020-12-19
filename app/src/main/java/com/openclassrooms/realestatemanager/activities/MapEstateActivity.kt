@@ -61,6 +61,7 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
 
     val estateViewModel by viewModel<EstateViewModel>()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         when{
@@ -68,26 +69,28 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
                     .checkSelfPermission(
                             this,
                             android.Manifest.permission.
-                            ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ->
+                            ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED -> {
                 requestPermissions(
                         arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
                         COARSE_LOCATION_PERMISSION_CODE)
+            }
             ContextCompat
                     .checkSelfPermission(
                             this,
                             android.Manifest.permission.
-                            ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ->
+                            ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED -> {
                 requestPermissions(
                         arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
                         FINE_LOCATION_PERMISSION_CODE)
+            }
+            else -> {
+                initMap()
+            }
         }
+    }
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.lastLocation
-                .addOnSuccessListener { location : Location ->
-                        userLocation = location
-                }
-
+    @SuppressLint("MissingPermission")
+    private fun initMap() {
         setContentView(R.layout.activity_map)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -103,25 +106,42 @@ internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, Goog
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == COARSE_LOCATION_PERMISSION_CODE)
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Coarse location permission is needed by the application", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        else
+            initMap()
 
         if (requestCode == FINE_LOCATION_PERMISSION_CODE)
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Fine location permission is needed by the application", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        else
+            initMap()
     }
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setOnMarkerClickListener(this)
         googleMap.isMyLocationEnabled = true
 
         googleMap.uiSettings.isMyLocationButtonEnabled = true
         googleMap.uiSettings.isZoomControlsEnabled = true
-        if (userLocation == null)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(44.447226, 1.438742), DEFAULT_ZOOM))
-        else
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(userLocation!!.latitude, userLocation!!.longitude), DEFAULT_ZOOM))
+
+        // Moving camera in Cahors by default
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(44.447226, 1.438742), DEFAULT_ZOOM))
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation
+                .addOnSuccessListener { location : Location? ->
+                    userLocation = location
+                    if (userLocation != null)
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(userLocation!!.latitude, userLocation!!.longitude), DEFAULT_ZOOM))
+                }
+
         // If there is some estates having coordinates to null and if there is an Internet connection, retrieving lat and lng
         estateViewModel.allEstates.observe(this, Observer {
             it.forEach{ estate ->

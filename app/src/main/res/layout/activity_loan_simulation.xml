@@ -36,6 +36,10 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -159,7 +163,7 @@
                     android:text="@string/buttonReset" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </ScrollView>
     </LinearLayout>
 
     <ImageView
