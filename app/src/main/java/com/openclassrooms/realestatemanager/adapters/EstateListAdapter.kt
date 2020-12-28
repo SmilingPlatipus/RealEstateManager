@@ -55,7 +55,7 @@ class EstateListAdapter(context: Context, list: MutableList<Estate>? = null) : R
         holder.image.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
                 var idOfSelectedEstate = estateList?.get(position)?.id
-                var detailIntent = Intent(v?.context,DetailEstateActivity::class.java)
+                var detailIntent = Intent(v?.context, DetailEstateActivity::class.java)
 
                 detailIntent.putExtra(ID_OF_SELECTED_ESTATE,idOfSelectedEstate)
                 v?.context?.let { startActivity(it,detailIntent,null) }

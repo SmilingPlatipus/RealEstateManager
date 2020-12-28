@@ -1,17 +1,13 @@
 package com.openclassrooms.realestatemanager.activities
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.Button
@@ -19,12 +15,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -41,18 +34,12 @@ import com.openclassrooms.realestatemanager.model.GeocodingResponse
 import com.openclassrooms.realestatemanager.utils.GeocodingService
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
-import com.openclassrooms.realestatemanager.viewModels.SearchViewModel
-import kotlinx.android.synthetic.main.activity_create_estate.*
-import kotlinx.android.synthetic.main.custom_info_window.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.OffsetDateTime
-import kotlin.math.roundToInt
 
 internal class MapEstateActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient

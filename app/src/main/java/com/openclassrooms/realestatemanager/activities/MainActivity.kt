@@ -1,7 +1,10 @@
 package com.openclassrooms.realestatemanager.activities
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.FragmentTransaction
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             androidLogger()
             modules(mainModule)
         }
+
 
         setContentView(R.layout.activity_main)
         val fragment = RecyclerViewFragment.newInstance()
