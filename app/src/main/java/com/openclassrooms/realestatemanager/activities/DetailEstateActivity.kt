@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.activities
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -13,9 +12,6 @@ import com.openclassrooms.realestatemanager.activities.MainActivity.Companion.ID
 import com.openclassrooms.realestatemanager.fragments.DetailFragment
 import com.openclassrooms.realestatemanager.fragments.RecyclerViewFragment
 import com.openclassrooms.realestatemanager.model.Estate
-import com.openclassrooms.realestatemanager.viewModels.DetailViewModel
-import com.openclassrooms.realestatemanager.viewModels.EstateViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailEstateActivity : AppCompatActivity(), OnMapReadyCallback {
     var estateSelected : Estate? = null

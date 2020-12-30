@@ -47,7 +47,14 @@ class EstateContentProvider : ContentProvider() {
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
-        return 0
+        if (context != null){
+            val id = estateDatabase.estateDao.deleteItem(ContentUris.parseId(uri))
+            context!!.contentResolver.notifyChange(uri, null)
+            return id
+        }
+
+        throw IllegalArgumentException("Failed to delete row into $uri")
+
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<out String>?): Int {

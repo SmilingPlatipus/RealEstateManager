@@ -25,12 +25,15 @@ import org.junit.runner.RunWith;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class ContentProviderInstrumentedTest {
@@ -44,19 +47,21 @@ public class ContentProviderInstrumentedTest {
 
     @Before
     public void setUp() {
-        Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
+        InstrumentationRegistry.getInstrumentation().getTargetContext().deleteDatabase("REM.db");
+        Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().getTargetContext(),
                 EstateDatabase.class)
                 .allowMainThreadQueries()
                 .build();
-        mContentResolver = InstrumentationRegistry.getContext().getContentResolver();
-        context = InstrumentationRegistry.getInstrumentation().getContext();
+        mContentResolver = InstrumentationRegistry.getInstrumentation().getTargetContext().getContentResolver();
+        context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
     }
 
     @Test
     public void getItemsWhenNoItemInserted() {
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(EstateContentProvider.utils.getURI_ESTATE(), ESTATE_ID), null, null, null, null);
         assertNotNull(cursor);
-        assertEquals(cursor.getCount(), 8);
+        assertEquals(0, cursor.getCount());
         cursor.close();
     }
 
@@ -67,6 +72,7 @@ public class ContentProviderInstrumentedTest {
         final Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(EstateContentProvider.utils.getURI_ESTATE(), ESTATE_ID), null, null, null, null);
         assertNotNull(cursor);
         assertEquals(cursor.getCount(), 1);
+        assertThat(cursor.moveToFirst(), is(true));
         assertEquals(cursor.getString(cursor.getColumnIndexOrThrow("type")), contentValues.get("type"));
         assertEquals(cursor.getDouble(cursor.getColumnIndexOrThrow("price")), (double) contentValues.get("price"),0);
         assertEquals(cursor.getFloat(cursor.getColumnIndexOrThrow("size")), (float) contentValues.get("size"),0);
@@ -79,15 +85,16 @@ public class ContentProviderInstrumentedTest {
         assertEquals(cursor.getString(cursor.getColumnIndexOrThrow("creationDate")), contentValues.get("creationDate"));
         assertEquals(cursor.getString(cursor.getColumnIndexOrThrow("saleDate")), contentValues.get("saleDate"));
         assertEquals(cursor.getString(cursor.getColumnIndexOrThrow("saler")), contentValues.get("saler"));
-        assertEquals(cursor.getString(cursor.getColumnIndexOrThrow("latitude")), contentValues.get("latitude"));
-        assertEquals(cursor.getString(cursor.getColumnIndexOrThrow("longitude")), contentValues.get("longitude"));
+        assertEquals(cursor.getDouble(cursor.getColumnIndexOrThrow("latitude")), contentValues.get("latitude"));
+        assertEquals(cursor.getDouble(cursor.getColumnIndexOrThrow("longitude")), contentValues.get("longitude"));
+        mContentResolver.delete(userUri, null, null);
     }
 
     private ContentValues generateEstate(){
         List<String> address = List.of("143", "Rue de la chartreuse", "46000", "Cahors");
         EnumSet<SearchActivity.NearbyServices> checkboxesStatus = EnumSet.noneOf(SearchActivity.NearbyServices.class);
-        List<String> poiList  = Collections.emptyList();
-        List <EstatePhoto> photoList = Collections.emptyList();
+        List<String> poiList  = new ArrayList<>();
+        List <EstatePhoto> photoList = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmX")
                 .withZone(ZoneOffset.UTC);
 

@@ -29,13 +29,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        startKoin {
-            androidContext(this@MainActivity)
-            androidLogger()
-            modules(mainModule)
-        }
-
-
         setContentView(R.layout.activity_main)
         val fragment = RecyclerViewFragment.newInstance()
         val fragmentManager = supportFragmentManager
