@@ -41,6 +41,11 @@ class DetailEstateActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        finish()
+    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         finish()

@@ -376,8 +376,7 @@ class CreateEstateActivity : AppCompatActivity()  {
                             .create(GeocodingService::class.java)
 
                     var formattedAddress = StringBuilder()
-                    formattedAddress.append(address[0] + "%20" + address[1].replace(" ", "%20"))
-                    formattedAddress.append("," + address[2] + "%20" + address[3])
+                    formattedAddress.append(address[0]+address[1]+"," + address[2] + " " + address[3])
 
                     Log.i(TAG, "formattedAddress value : $formattedAddress")
 
