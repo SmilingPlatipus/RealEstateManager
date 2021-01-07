@@ -5,7 +5,6 @@
 * [Technologies](#technologies)
 * [Screens](#screens)
 * [Functionnalities already implemented](#Functionnalities-already-implemented)
-* [ToDo](#ToDo)
 
 ## General info
 This project is thought to cover all the aspects of the real estate seller job
@@ -34,9 +33,5 @@ Project is created with:
 - [X] :thumbsup:Screen for map
 - [X] :thumbsup:Geocoding features
 - [X] :thumbsup:Screen for searching a real estate inside the SQLite database
-
-## ToDo
-
-- [ ] :pushpin:ContentProvider
-- [ ] :pushpin:Tablet custom support
-- [ ] :pushpin:Connection tests/Provider tests
+- [X] :thumbsup:ContentProvider
+- [X] :thumbsup:Tablet support, with custom detail screen
