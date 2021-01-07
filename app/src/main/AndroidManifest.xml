@@ -51,19 +51,22 @@
             </intent-filter>
         </activity>
         <activity android:name="com.openclassrooms.realestatemanager.activities.LoanActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity android:name="com.openclassrooms.realestatemanager.activities.SearchActivity"
             android:parentActivityName=".activities.MainActivity">
         </activity>
         <activity android:name="com.openclassrooms.realestatemanager.activities.CreateEstateActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity android:name="com.openclassrooms.realestatemanager.activities.MapEstateActivity"
             android:parentActivityName=".activities.MainActivity">
         </activity>
         <activity android:name="com.openclassrooms.realestatemanager.activities.DetailEstateActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
     </application>
